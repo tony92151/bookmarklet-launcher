@@ -1,41 +1,41 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bookmarklet Manager — 管理腳本</title>
+  <title>Bookmarklet Manager</title>
   <link rel="stylesheet" href="options.css" />
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>📋 管理腳本</h1>
-      <p class="sub">新增你自己的書籤腳本。可貼上 <code>javascript:</code> 書籤碼或原始 JavaScript,系統會自動解碼。</p>
+      <h1>Manage Scripts</h1>
+      <p class="sub">Add your own bookmarklets. Paste a <code>javascript:</code> bookmarklet or raw JavaScript, and the system will automatically decode it.</p>
     </header>
 
     <section class="card">
-      <h2 id="form-title">新增腳本</h2>
+      <h2 id="form-title">Add Script</h2>
       <form id="script-form">
         <label>
-          名稱
-          <input type="text" id="name" placeholder="例如:C1 Shopping Trips" required />
+          Name
+          <input type="text" id="name" placeholder="e.g., C1 Shopping Trips" required />
         </label>
         <label>
-          程式碼 (javascript: 書籤碼 或 原始 JS)
-          <textarea id="code" rows="10" placeholder="javascript:(()=>{ ... })();  或  alert(document.title)" required></textarea>
+          Code (javascript: bookmarklet or raw JS)
+          <textarea id="code" rows="10" placeholder="javascript:(()=>{ ... })();  or  alert(document.title)" required></textarea>
         </label>
         <div class="form-actions">
-          <button type="submit" class="primary-btn" id="save-btn">儲存</button>
-          <button type="button" class="ghost-btn hidden" id="cancel-btn">取消編輯</button>
+          <button type="submit" class="primary-btn" id="save-btn">Save</button>
+          <button type="button" class="ghost-btn hidden" id="cancel-btn">Cancel</button>
           <span id="form-hint" class="hint"></span>
         </div>
       </form>
     </section>
 
     <section class="card">
-      <h2>已儲存的腳本 (<span id="count">0</span>)</h2>
+      <h2>Saved Scripts (<span id="count">0</span>)</h2>
       <ul id="list"></ul>
-      <p id="list-empty" class="empty hidden">還沒有腳本。</p>
+      <p id="list-empty" class="empty hidden">No scripts yet.</p>
     </section>
   </div>
 

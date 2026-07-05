@@ -30,8 +30,8 @@ function setHint(text) {
 
 function enterEditMode(script) {
   editingId = script.id;
-  formTitle.textContent = "編輯腳本";
-  saveBtn.textContent = "更新";
+  formTitle.textContent = "Edit Script";
+  saveBtn.textContent = "Update";
   cancelBtn.classList.remove("hidden");
   nameInput.value = script.name;
   codeInput.value = script.code;
@@ -40,8 +40,8 @@ function enterEditMode(script) {
 
 function exitEditMode() {
   editingId = null;
-  formTitle.textContent = "新增腳本";
-  saveBtn.textContent = "儲存";
+  formTitle.textContent = "Add Script";
+  saveBtn.textContent = "Save";
   cancelBtn.classList.add("hidden");
   form.reset();
 }
@@ -70,11 +70,11 @@ function renderList(scripts) {
     actions.className = "item-actions";
     const editBtn = document.createElement("button");
     editBtn.className = "sm-btn edit";
-    editBtn.textContent = "編輯";
+    editBtn.textContent = "Edit";
     editBtn.addEventListener("click", () => enterEditMode(script));
     const delBtn = document.createElement("button");
     delBtn.className = "sm-btn delete";
-    delBtn.textContent = "刪除";
+    delBtn.textContent = "Delete";
     delBtn.addEventListener("click", () => onDelete(script));
     actions.appendChild(editBtn);
     actions.appendChild(delBtn);
@@ -91,7 +91,7 @@ async function refresh() {
 }
 
 async function onDelete(script) {
-  if (!confirm(`確定刪除「${script.name}」?`)) return;
+  if (!confirm(`Delete "${script.name}"?`)) return;
   await deleteScript(script.id);
   if (editingId === script.id) exitEditMode();
   await refresh();
@@ -103,18 +103,18 @@ form.addEventListener("submit", async (e) => {
   const { code, wasBookmarklet } = decodeBookmarklet(codeInput.value);
 
   if (!code) {
-    setHint("程式碼不可為空。");
+    setHint("Code cannot be empty.");
     return;
   }
 
   if (editingId) {
     await updateScript(editingId, { name, code });
     exitEditMode();
-    setHint("已更新。");
+    setHint("Updated.");
   } else {
     await saveScript({ name, code });
     form.reset();
-    setHint(wasBookmarklet ? "已解碼書籤碼並儲存。" : "已儲存。");
+    setHint(wasBookmarklet ? "Decoded bookmarklet and saved." : "Saved.");
   }
   await refresh();
 });

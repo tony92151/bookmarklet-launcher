@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,12 +10,11 @@
     <h1>📋 Bookmarklet Manager</h1>
   </header>
 
-  <!-- userScripts 開關未開啟時的提示 -->
   <div id="setup-banner" class="banner hidden">
-    <strong>需要啟用「允許使用者腳本」</strong>
-    <p>前往 <code>chrome://extensions</code> → 本擴充功能「詳細資料」→ 開啟「允許使用者腳本 (Allow user scripts)」開關,才能執行腳本。</p>
-    <p class="banner-hint">已開啟卻仍看到此提示?請在擴充功能卡片上按一次「🔄 重新載入」,或重啟瀏覽器。</p>
-    <button id="open-extensions" class="link-btn">開啟擴充功能頁面</button>
+    <strong>Allow user scripts needs to be enabled</strong>
+    <p>Go to <code>chrome://extensions</code> → This extension's "Details" → Enable "Allow user scripts" to run scripts.</p>
+    <p class="banner-hint">Already enabled but still seeing this? Click "🔄 Reload" on the extension card, or restart the browser.</p>
+    <button id="open-extensions" class="link-btn">Open Extensions Page</button>
   </div>
 
   <div id="status" class="status hidden"></div>
@@ -23,12 +22,12 @@
   <ul id="script-list"></ul>
 
   <div id="empty" class="empty hidden">
-    <p>尚無腳本</p>
-    <button id="add-first" class="primary-btn">新增第一個腳本</button>
+    <p>No scripts yet</p>
+    <button id="add-first" class="primary-btn">Add First Script</button>
   </div>
 
   <footer>
-    <button id="manage" class="link-btn">⚙️ 管理腳本</button>
+    <button id="manage" class="link-btn">⚙️ Manage Scripts</button>
   </footer>
 
   <script type="module" src="popup.js"></script>
