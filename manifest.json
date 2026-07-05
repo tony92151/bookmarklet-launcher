@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Bookmarklet Manager",
+  "version": "1.0.0",
+  "description": "新增並從彈出視窗執行你自己的書籤腳本 (javascript: bookmarklet 或原始 JS),效果與書籤相同。",
+  "minimum_chrome_version": "135",
+  "permissions": ["userScripts", "storage", "activeTab"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Bookmarklet Manager",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
