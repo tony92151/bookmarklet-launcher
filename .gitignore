@@ -35,3 +35,5 @@ web-ext-artifacts/
 *.crx
 *.xpi
 *.zip
+
+.codex
