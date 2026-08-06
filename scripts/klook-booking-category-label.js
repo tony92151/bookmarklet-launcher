@@ -2,25 +2,26 @@
   'use strict';
 
   const TARGET_HOST = 'www.klook.com';
-  const TARGET_PATH = '/zh-TW/bookings/';
   const LABEL_ATTRIBUTE = 'data-klook-category-label';
   const OBSERVER_KEY = '__klookBookingCategoryObserver';
-  const RESCAN_TIMER_KEY = '__klookBookingCategoryRescanTimer';
+  const TIMER_KEY = '__klookBookingCategoryTimer';
 
-  // 僅允許在 Klook 繁中版訂單頁執行。
-  const normalizedPath = `${location.pathname.replace(/\/+$/, '')}/`;
-  if (location.hostname !== TARGET_HOST || normalizedPath !== TARGET_PATH) {
-    alert('此腳本只能在 https://www.klook.com/zh-TW/bookings/ 執行。');
+  // Allow all Klook booking-page language variants.
+  if (
+    location.hostname !== TARGET_HOST ||
+    !/\/bookings\/?$/.test(location.pathname)
+  ) {
+    alert('This script can only run on a Klook bookings page.');
     return;
   }
 
   const showToast = (message) => {
-    const oldToast = document.getElementById('klook-category-label-toast');
-    if (oldToast) oldToast.remove();
+    document.getElementById('klook-category-toast')?.remove();
 
     const toast = document.createElement('div');
-    toast.id = 'klook-category-label-toast';
+    toast.id = 'klook-category-toast';
     toast.textContent = message;
+
     Object.assign(toast.style, {
       position: 'fixed',
       right: '20px',
@@ -40,157 +41,320 @@
     window.setTimeout(() => toast.remove(), 2800);
   };
 
-  // 從圖片 URL 或 CSS background-image 取得分類圖示的檔名。
   const getIconUrl = (card) => {
-    const icon = card.querySelector('.booking-item_icon, [class*="booking-item_icon"]');
-    if (!icon) return '';
+    const image = card.querySelector('.booking-item_icon img');
 
-    const image = icon.matches('img') ? icon : icon.querySelector('img');
-    if (image) {
-      return image.currentSrc || image.src || image.getAttribute('src') || '';
-    }
+    return (
+      image?.currentSrc ||
+      image?.src ||
+      image?.getAttribute('src') ||
+      ''
+    );
+  };
 
-    const source = icon.querySelector('source[srcset]');
-    if (source) {
-      const firstCandidate = source.getAttribute('srcset')?.split(',')[0]?.trim().split(/\s+/)[0];
-      if (firstCandidate) return firstCandidate;
-    }
-
-    const backgroundImage = getComputedStyle(icon).backgroundImage;
-    const match = backgroundImage.match(/^url\(["']?(.*?)["']?\)$/);
-    return match ? match[1] : '';
+  const normalizeCategoryPart = (value) => {
+    return value
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
   };
 
   const parseCategory = (iconUrl) => {
-    if (!iconUrl) return null;
+    if (!iconUrl) {
+      return null;
+    }
 
     try {
-      const pathname = new URL(iconUrl, location.href).pathname;
-      const filename = decodeURIComponent(pathname.split('/').pop() || '');
+      const url = new URL(iconUrl, location.href);
+
+      const filename = decodeURIComponent(
+        url.pathname.split('/').pop() || ''
+      );
+
+      if (!filename) {
+        return null;
+      }
+
       const basename = filename.replace(/\.[^.]+$/, '');
 
-      if (!basename.startsWith('category_')) return null;
+      /*
+       * Supports any category level:
+       *
+       * category_experiences_l1_culture_experience_48
+       * -> experiences|culture_experience
+       *
+       * category_experiences_l2_tours_sightseeing_bg48
+       * -> experiences|tours_sightseeing
+       *
+       * category_experiences_l2_boat_tours_cruises_yachts_bg48
+       * -> experiences|boat_tours_cruises_yachts
+       *
+       * category_transport_l1_trains_bg48
+       * -> transport|trains
+       */
+      const categoryMatch = basename.match(
+        /^category_(.+?)_l\d+_(.+?)(?:_48|_?bg48)$/i
+      );
 
-      // 例如：category_experiences_l1_culture_experience_48
-      const categoryKey = basename
-        .replace(/^category_.+?_l1_/, '')
-        .replace(/_\d+$/, '')
-        .trim();
+      if (categoryMatch) {
+        const parentCategory = normalizeCategoryPart(
+          categoryMatch[1]
+        );
 
-      if (!categoryKey || categoryKey === basename) return null;
+        const childCategory = normalizeCategoryPart(
+          categoryMatch[2]
+        );
 
-      const label = categoryKey
-        .replace(/[_-]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+        if (parentCategory && childCategory) {
+          return {
+            raw: filename,
+            label: `${parentCategory}|${childCategory}`,
+            parsed: true
+          };
+        }
+      }
 
-      return label ? { raw: basename, label } : null;
+      /*
+       * icon_category_event_shows_app_3x
+       * -> event_shows
+       */
+      const iconMatch = basename.match(
+        /^icon_category_(.+?)_(?:app|web)(?:_\d+x)?$/i
+      );
+
+      if (iconMatch) {
+        const category = normalizeCategoryPart(
+          iconMatch[1]
+        );
+
+        if (category) {
+          return {
+            raw: filename,
+            label: category,
+            parsed: true
+          };
+        }
+      }
+
+      // Unknown format: display the complete filename.
+      return {
+        raw: filename,
+        label: filename,
+        parsed: false
+      };
     } catch (error) {
-      console.warn('[Klook Category Label] 無法解析圖示 URL：', iconUrl, error);
+      console.warn(
+        '[Klook Category] Unable to parse category image:',
+        iconUrl,
+        error
+      );
+
+      // Last-resort fallback for malformed URLs.
+      const fallbackFilename = iconUrl
+        .split('?')[0]
+        .split('#')[0]
+        .split('/')
+        .pop();
+
+      if (fallbackFilename) {
+        return {
+          raw: fallbackFilename,
+          label: fallbackFilename,
+          parsed: false
+        };
+      }
+
       return null;
     }
   };
 
-  const findTitleElement = (card) => {
-    const selectors = [
-      '.booking-item_title',
-      '.booking-item__title',
-      '[class*="booking-item_title"]',
-      '[class*="booking-item__title"]',
-      '[class*="booking-title"]',
-      'h3',
-      'h4'
-    ];
-
-    for (const selector of selectors) {
-      const element = card.querySelector(selector);
-      if (element?.textContent?.trim()) return element;
-    }
-
-    return null;
-  };
-
-  const createLabel = ({ raw, label }) => {
+  const createLabel = ({ raw, label, parsed }) => {
     const badge = document.createElement('span');
+
     badge.setAttribute(LABEL_ATTRIBUTE, 'true');
-    badge.title = raw;
     badge.textContent = label;
+    badge.title = parsed
+      ? raw
+      : `Unrecognized format: ${raw}`;
 
     Object.assign(badge.style, {
       display: 'inline-flex',
       alignItems: 'center',
       marginLeft: '8px',
       padding: '2px 8px',
-      border: '1px solid #ff5b00',
+      border: parsed
+        ? '1px solid #ff5b00'
+        : '1px solid #8a8a8a',
       borderRadius: '999px',
-      background: '#fff7f2',
-      color: '#d94f00',
+      background: parsed
+        ? '#fff7f2'
+        : '#f5f5f5',
+      color: parsed
+        ? '#d94f00'
+        : '#555',
       fontSize: '12px',
       fontWeight: '600',
+      fontFamily: 'monospace',
       lineHeight: '18px',
       verticalAlign: 'middle',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      maxWidth: '100%',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
     });
 
     return badge;
   };
 
   const scanBookings = () => {
-    const cards = Array.from(document.querySelectorAll('.booking-item'));
+    const cards = [
+      ...document.querySelectorAll('.booking-item')
+    ];
+
     let added = 0;
+    let fallbackUsed = 0;
+    let iconMissing = 0;
+    let titleMissing = 0;
 
     for (const card of cards) {
-      if (card.querySelector(`[${LABEL_ATTRIBUTE}="true"]`)) continue;
+      if (
+        card.querySelector(
+          `[${LABEL_ATTRIBUTE}="true"]`
+        )
+      ) {
+        continue;
+      }
 
-      const category = parseCategory(getIconUrl(card));
-      if (!category) continue;
+      const iconUrl = getIconUrl(card);
 
-      const title = findTitleElement(card);
+      if (!iconUrl) {
+        iconMissing += 1;
+
+        console.warn(
+          '[Klook Category] Unable to find the category image:',
+          card
+        );
+
+        continue;
+      }
+
+      const category = parseCategory(iconUrl);
+
+      if (!category) {
+        iconMissing += 1;
+
+        console.warn(
+          '[Klook Category] Unable to obtain a category filename:',
+          iconUrl
+        );
+
+        continue;
+      }
+
+      const title = card.querySelector(
+        '.booking-content_title'
+      );
+
       if (!title) {
-        console.warn('[Klook Category Label] 找不到訂單標題：', card);
+        titleMissing += 1;
+
+        console.warn(
+          '[Klook Category] Unable to find .booking-content_title:',
+          card
+        );
+
         continue;
       }
 
       title.appendChild(createLabel(category));
+
       added += 1;
+
+      if (!category.parsed) {
+        fallbackUsed += 1;
+
+        console.warn(
+          '[Klook Category] Unrecognized filename format; displaying the full filename:',
+          category.raw
+        );
+      }
     }
 
-    return { cardCount: cards.length, added };
+    return {
+      cardCount: cards.length,
+      added,
+      fallbackUsed,
+      iconMissing,
+      titleMissing
+    };
   };
 
   const initialResult = scanBookings();
 
   if (initialResult.cardCount === 0) {
-    alert('找不到 Klook 訂單卡片，請確認頁面已載入完成後再執行。');
+    alert(
+      'No Klook booking cards were found. Wait for the page to finish loading and try again.'
+    );
   } else if (initialResult.added === 0) {
-    showToast('找到訂單，但未能解析分類圖示。');
+    alert(
+      [
+        'Bookings were found, but no category labels were added.',
+        `Missing category images: ${initialResult.iconMissing}`,
+        `Missing booking titles: ${initialResult.titleMissing}`,
+        'Open the browser console for more details.'
+      ].join('\n')
+    );
   } else {
-    showToast(`已顯示 ${initialResult.added} 筆訂單分類`);
-    console.log(`[Klook Category Label] 已新增 ${initialResult.added} 個分類標籤。`);
+    const fallbackMessage = initialResult.fallbackUsed > 0
+      ? ` (${initialResult.fallbackUsed} full filename fallbacks)`
+      : '';
+
+    showToast(
+      `Added category labels to ${initialResult.added} bookings${fallbackMessage}`
+    );
+
+    console.log(
+      '[Klook Category] Scan result:',
+      initialResult
+    );
   }
 
-  // 重複執行時先清除舊 observer，避免同一頁累積監聽器。
+  // Disconnect the previous observer when the script runs again.
   if (window[OBSERVER_KEY] instanceof MutationObserver) {
     window[OBSERVER_KEY].disconnect();
   }
-  if (window[RESCAN_TIMER_KEY]) {
-    clearTimeout(window[RESCAN_TIMER_KEY]);
+
+  if (window[TIMER_KEY]) {
+    clearTimeout(window[TIMER_KEY]);
   }
 
+  // Watch for bookings loaded dynamically by the page.
   const observer = new MutationObserver((mutations) => {
-    const hasAddedNodes = mutations.some((mutation) => mutation.addedNodes.length > 0);
-    if (!hasAddedNodes) return;
+    const hasAddedNodes = mutations.some(
+      (mutation) => mutation.addedNodes.length > 0
+    );
 
-    clearTimeout(window[RESCAN_TIMER_KEY]);
-    window[RESCAN_TIMER_KEY] = window.setTimeout(() => {
+    if (!hasAddedNodes) {
+      return;
+    }
+
+    clearTimeout(window[TIMER_KEY]);
+
+    window[TIMER_KEY] = window.setTimeout(() => {
       const result = scanBookings();
+
       if (result.added > 0) {
-        console.log(`[Klook Category Label] 動態新增 ${result.added} 個分類標籤。`);
+        console.log(
+          `[Klook Category] Added ${result.added} dynamically loaded category labels.`,
+          result
+        );
       }
     }, 150);
   });
 
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
   window[OBSERVER_KEY] = observer;
 })();
