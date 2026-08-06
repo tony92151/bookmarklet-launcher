@@ -1,0 +1,21 @@
+{
+  "bookmarklets": [
+    {
+      "id": "klook-booking-category",
+      "name": {
+        "en": "Klook Booking Category Labels",
+        "zh-TW": "Klook 訂單分類標籤"
+      },
+      "description": {
+        "en": "Shows the category extracted from each booking icon beside the booking title.",
+        "zh-TW": "在每筆訂單標題旁顯示從分類圖示解析出的分類。"
+      },
+      "source": "scripts/klook-booking-category-label.js",
+      "matches": [
+        "https://www.klook.com/*/bookings/"
+      ],
+      "version": "1.0.0",
+      "updated": "2026-08-06"
+    }
+  ]
+}
