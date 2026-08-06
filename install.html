@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Install useful bookmarklets by dragging, bookmarking, or copying their code.">
+  <title>Bookmarklet Launcher</title>
+  <link rel="stylesheet" href="assets/install.css">
+  <script src="assets/install.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="install.html" aria-label="Bookmarklet Launcher home">
+      <span class="brand-mark" aria-hidden="true">{ }</span>
+      <span>Bookmarklet Launcher</span>
+    </a>
+
+    <nav class="header-actions" aria-label="Site navigation">
+      <div class="language-switch" role="group" aria-label="Language">
+        <button type="button" class="language-button" data-language="en" aria-pressed="true">EN</button>
+        <button type="button" class="language-button" data-language="zh-TW" aria-pressed="false">繁中</button>
+      </div>
+      <a href="https://github.com/tony92151/bookmarklet-launcher" target="_blank" rel="noopener noreferrer" data-i18n="github">GitHub</a>
+      <a href="https://github.com/tony92151/bookmarklet-launcher#installation" target="_blank" rel="noopener noreferrer" data-i18n="extension">Extension</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow" data-i18n="eyebrow">No extension required</p>
+      <h1 id="page-title" data-i18n="heroTitle">Add useful tools to your bookmarks bar</h1>
+      <p class="hero-copy" data-i18n="heroDescription">
+        Drag an install button to your bookmarks bar, right-click it to add a bookmark, or copy the code manually.
+      </p>
+      <div class="hero-actions">
+        <a class="primary-link" href="#bookmarklets" data-i18n="browse">Browse bookmarklets</a>
+        <a class="secondary-link" href="https://github.com/tony92151/bookmarklet-launcher#installation" target="_blank" rel="noopener noreferrer" data-i18n="installExtension">Install Bookmarklet Manager</a>
+      </div>
+      <p class="security-note" role="note">
+        <strong data-i18n="securityTitle">Security:</strong>
+        <span data-i18n="securityText">Only install scripts you trust and understand.</span>
+      </p>
+    </section>
+
+    <section id="bookmarklets" class="catalog-section" aria-labelledby="catalog-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="catalogEyebrow">Available tools</p>
+          <h2 id="catalog-title" data-i18n="catalogTitle">Bookmarklets</h2>
+        </div>
+        <p data-i18n="catalogDescription">Each tool runs locally in the page you are viewing.</p>
+      </div>
+
+      <div id="catalog-status" class="page-status" aria-live="polite"></div>
+      <div id="bookmarklet-list" class="bookmarklet-grid" aria-live="polite" aria-busy="true"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p data-i18n="footerText">Scripts run locally in your current page and are not sent to a remote service.</p>
+    <div class="footer-links">
+      <a href="https://github.com/tony92151/bookmarklet-launcher" target="_blank" rel="noopener noreferrer" data-i18n="source">Source</a>
+      <a href="https://github.com/tony92151/bookmarklet-launcher/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" data-i18n="license">License</a>
+    </div>
+  </footer>
+
+  <dialog id="copy-dialog" class="copy-dialog" aria-labelledby="copy-dialog-title">
+    <form method="dialog">
+      <div class="dialog-heading">
+        <h2 id="copy-dialog-title" data-i18n="manualCopyTitle">Copy bookmarklet code</h2>
+        <button class="icon-button" value="cancel" aria-label="Close">×</button>
+      </div>
+      <p data-i18n="manualCopyDescription">Copy the complete text below, create a new bookmark, and paste it into the bookmark URL field.</p>
+      <textarea id="copy-textarea" readonly rows="8"></textarea>
+      <div class="dialog-actions">
+        <button type="button" id="select-code-button" class="secondary-button" data-i18n="selectAll">Select all</button>
+        <button value="cancel" class="primary-button" data-i18n="close">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="bookmarklet-card-template">
+    <article class="bookmarklet-card">
+      <div class="card-heading">
+        <div>
+          <p class="card-kicker" data-role="version"></p>
+          <h3 data-role="name"></h3>
+        </div>
+        <span class="card-state" data-role="state" aria-live="polite"></span>
+      </div>
+      <p class="card-description" data-role="description"></p>
+      <div class="works-on">
+        <span class="meta-label" data-i18n-dynamic="worksOn">Works on</span>
+        <div class="pattern-list" data-role="matches"></div>
+      </div>
+      <a class="install-link is-loading" data-role="install" href="#" draggable="true" aria-disabled="true"></a>
+      <p class="install-hint" data-i18n-dynamic="installHint">Drag this button to the bookmarks bar, or right-click it and add the link as a bookmark.</p>
+      <div class="card-actions">
+        <button type="button" class="secondary-button" data-role="copy" disabled></button>
+        <a class="text-link" data-role="source" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+      <ol class="usage-list">
+        <li data-i18n-dynamic="stepOne">Install the bookmarklet using drag, right-click, or copy.</li>
+        <li data-i18n-dynamic="stepTwo">Open a supported webpage.</li>
+        <li data-i18n-dynamic="stepThree">Click the bookmark to run the tool.</li>
+      </ol>
+      <p class="card-message" data-role="message" aria-live="polite"></p>
+    </article>
+  </template>
+</body>
+</html>
