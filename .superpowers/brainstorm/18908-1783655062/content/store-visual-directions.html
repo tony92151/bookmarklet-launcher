@@ -1,0 +1,69 @@
+<h2>Chrome 商店使用圖：你偏好哪種敘事？</h2>
+<p class="subtitle">三種方向都面向一般使用者；差別在第一眼要先看到「能做什麼」、使用前後差異，或工具本身。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:linear-gradient(135deg,#eff6ff,#ffffff);min-height:260px;">
+      <div style="font-size:12px;color:#2563eb;font-weight:700;margin-bottom:8px;">推薦方向 A · 情境導向</div>
+      <div style="font-size:24px;font-weight:800;line-height:1.2;color:#0f172a;">常用網頁小工具<br>點一下就能用</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0;">
+        <div style="background:white;border:1px solid #dbeafe;border-radius:12px;padding:12px 6px;text-align:center;"><div style="font-size:24px;">🧹</div><small>整理內容</small></div>
+        <div style="background:white;border:1px solid #dbeafe;border-radius:12px;padding:12px 6px;text-align:center;"><div style="font-size:24px;">📋</div><small>快速複製</small></div>
+        <div style="background:white;border:1px solid #dbeafe;border-radius:12px;padding:12px 6px;text-align:center;"><div style="font-size:24px;">🛍️</div><small>購物訂房</small></div>
+      </div>
+      <div style="background:#0f172a;border-radius:10px;color:white;padding:11px 14px;font-size:13px;">選擇工具 → 在目前網頁執行</div>
+    </div>
+    <div class="card-body">
+      <h3>A. 生活情境優先</h3>
+      <p>先說用途，再展示插件。最容易讓不懂 bookmarklet 的使用者理解。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:#f8fafc;min-height:260px;">
+      <div style="font-size:12px;color:#7c3aed;font-weight:700;margin-bottom:8px;">方向 B · Before / After</div>
+      <div style="font-size:22px;font-weight:800;color:#0f172a;">雜亂資訊，快速變清楚</div>
+      <div style="display:grid;grid-template-columns:1fr 28px 1fr;align-items:center;gap:8px;margin-top:18px;">
+        <div style="background:white;border:1px solid #e2e8f0;border-radius:10px;padding:10px;min-height:130px;">
+          <small style="color:#64748b;">原始頁面</small>
+          <div style="height:9px;background:#cbd5e1;margin:12px 0 7px;border-radius:5px;"></div><div style="height:9px;background:#e2e8f0;margin:7px 0;border-radius:5px;"></div><div style="height:9px;background:#cbd5e1;margin:7px 0;border-radius:5px;"></div><div style="height:9px;background:#e2e8f0;margin:7px 0;border-radius:5px;"></div>
+        </div>
+        <div style="text-align:center;color:#7c3aed;font-size:22px;">→</div>
+        <div style="background:white;border:2px solid #8b5cf6;border-radius:10px;padding:10px;min-height:130px;">
+          <small style="color:#7c3aed;font-weight:700;">整理完成</small>
+          <div style="font-size:15px;font-weight:700;margin:13px 0 8px;">重點內容</div><div style="font-size:12px;color:#475569;line-height:1.6;">✓ 價格資訊<br>✓ 房型條件<br>✓ 一鍵複製</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 效果對比優先</h3>
+      <p>成果很有說服力，但每張圖需要真實、明確的範例工具支撐。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:linear-gradient(145deg,#0f172a,#1e293b);color:white;min-height:260px;">
+      <div style="font-size:12px;color:#93c5fd;font-weight:700;margin-bottom:8px;">方向 C · 工具介面</div>
+      <div style="font-size:22px;font-weight:800;">你的網頁工具箱</div>
+      <div style="background:#f8fafc;color:#0f172a;border-radius:12px;margin-top:18px;padding:12px;box-shadow:0 16px 30px rgba(0,0,0,.3);">
+        <div style="font-weight:750;border-bottom:1px solid #e2e8f0;padding-bottom:9px;">Bookmarklet Manager</div>
+        <div style="display:grid;gap:8px;margin-top:10px;">
+          <div style="background:#2563eb;color:white;border-radius:7px;padding:9px;">整理目前頁面</div>
+          <div style="background:white;border:1px solid #cbd5e1;border-radius:7px;padding:9px;">複製商品資訊</div>
+          <div style="background:white;border:1px solid #cbd5e1;border-radius:7px;padding:9px;">整理訂房資料</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 產品畫面優先</h3>
+      <p>最忠於目前 UI，也最像一般擴充功能商店頁，但用途的吸引力較弱。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:22px;">
+  <div class="pros-cons">
+    <div class="pros"><h4>我的建議</h4><ul><li>以 A 作為整組圖片的視覺語言</li><li>第二、三張混用 B 展示具體成果</li><li>最後一張再用 C 說明自訂工具與本機保存</li></ul></div>
+    <div class="cons"><h4>上架前要注意</h4><ul><li>圖片只能展示實際已內建的工具</li><li>不要暗示能自動比價或抓取所有網站</li><li>技術設定應獨立做成教學圖</li></ul></div>
+  </div>
+</div>
