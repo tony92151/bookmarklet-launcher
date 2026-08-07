@@ -1,0 +1,65 @@
+.converter-page {
+  width: min(920px, calc(100% - 32px));
+  margin: 48px auto 80px;
+}
+
+.converter-card {
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.converter-card h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.converter-card .hero-copy {
+  margin: 0;
+}
+
+.converter-card label {
+  display: block;
+  margin: 24px 0 8px;
+  font-weight: 800;
+}
+
+.converter-card textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fbfcff;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.converter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+@media (max-width: 600px) {
+  .converter-page {
+    width: min(100% - 22px, 920px);
+    margin-top: 24px;
+  }
+
+  .converter-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .converter-actions > button {
+    width: 100%;
+  }
+}
