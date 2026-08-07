@@ -20,34 +20,39 @@
     }
   };
 
+  const setText = (node, value) => {
+    if (node && node.textContent !== value) node.textContent = value;
+  };
+
   const setMessage = (card, message, kind = '') => {
     const node = card.querySelector('[data-role="message"]');
     if (!node) return;
-    node.textContent = message;
+    setText(node, message);
     node.classList.remove('is-success', 'is-error');
     if (kind) node.classList.add(`is-${kind}`);
   };
 
   const encodeInstallLink = (link) => {
-    if (!window.BookmarkletConverter) return;
+    if (!window.BookmarkletConverter || link.dataset.directBookmarkletEncoded === 'true') return;
     const raw = link.getAttribute('href') || '';
     if (!raw.toLowerCase().startsWith('javascript:')) return;
 
-    const encoded = window.BookmarkletConverter.toBookmarkletUrl(raw);
-    if (raw !== encoded) link.setAttribute('href', encoded);
+    link.setAttribute('href', window.BookmarkletConverter.toBookmarkletUrl(raw));
+    link.dataset.directBookmarkletEncoded = 'true';
   };
 
   const refresh = () => {
     const language = getLanguage();
     document.querySelectorAll('[data-role="install"]').forEach(encodeInstallLink);
     document.querySelectorAll('[data-role="copy"]').forEach((button) => {
-      button.textContent = copyLabels[language].button;
+      setText(button, copyLabels[language].button);
     });
 
-    const title = document.querySelector('#copy-dialog-title');
-    const description = document.querySelector('#copy-dialog [data-i18n="manualCopyDescription"]');
-    if (title) title.textContent = copyLabels[language].title;
-    if (description) description.textContent = copyLabels[language].description;
+    setText(document.querySelector('#copy-dialog-title'), copyLabels[language].title);
+    setText(
+      document.querySelector('#copy-dialog [data-i18n="manualCopyDescription"]'),
+      copyLabels[language].description
+    );
   };
 
   const openManualCopyDialog = (value) => {
@@ -97,7 +102,6 @@
   const observer = new MutationObserver(refresh);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['lang'],
     childList: true,
     subtree: true
   });
