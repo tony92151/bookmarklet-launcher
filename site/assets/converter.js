@@ -1,3 +1,5 @@
+import { decodeBookmarklet, toBookmarkletUrl } from '../../shared/bookmarklet.js';
+
 (() => {
   'use strict';
 
@@ -26,7 +28,7 @@
       return;
     }
 
-    setOutput(window.BookmarkletConverter.toBookmarkletUrl(input.value));
+    setOutput(toBookmarkletUrl(input.value));
     setStatus('Bookmarklet URL created.', 'success');
   });
 
@@ -37,7 +39,7 @@
     }
 
     try {
-      setOutput(window.BookmarkletConverter.decodeBookmarklet(input.value));
+      setOutput(decodeBookmarklet(input.value));
       setStatus('Bookmarklet decoded.', 'success');
     } catch (error) {
       setOutput('');

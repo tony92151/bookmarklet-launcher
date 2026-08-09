@@ -1,3 +1,5 @@
+import { toBookmarkletUrl } from '../../shared/bookmarklet.js';
+
 (() => {
   'use strict';
 
@@ -183,9 +185,9 @@
     if (/^(?:data|javascript):/i.test(source)) return false;
 
     try {
-      const base = new URL('.', location.href);
-      const resolved = new URL(source, base);
-      return resolved.origin === base.origin && resolved.href.startsWith(base.href);
+      const sourceRoot = new URL('../bookmarklets/', location.href);
+      const resolved = new URL(source, location.href);
+      return resolved.origin === sourceRoot.origin && resolved.href.startsWith(sourceRoot.href);
     } catch {
       return false;
     }
@@ -286,7 +288,7 @@
       const source = (await response.text()).replace(/^\uFEFF/, '');
       if (!source.trim()) throw new Error('Empty script');
 
-      cardState.bookmarkletUrl = `javascript:${source}`;
+      cardState.bookmarkletUrl = toBookmarkletUrl(source);
       cardState.loaded = true;
       cardState.nodes.install.href = cardState.bookmarkletUrl;
       cardState.nodes.install.classList.remove('is-loading');
@@ -327,7 +329,7 @@
     elements.catalogStatus.textContent = t('loadingCatalog');
 
     try {
-      const response = await fetch('bookmarklets.json', { cache: 'no-cache' });
+      const response = await fetch('../bookmarklets/catalog.json', { cache: 'no-cache' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       if (!data || !Array.isArray(data.bookmarklets)) throw new Error('Invalid catalog shape');
