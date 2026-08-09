@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   decodeBookmarklet,
   encodeJavaScript,
+  normalizeScriptInput,
   stripBom,
   stripJavascriptPrefix,
   toBookmarkletUrl,
@@ -40,6 +41,28 @@ test('decodeBookmarklet removes the prefix and decodes bookmarklet content', () 
 test('decodeBookmarklet rejects malformed percent encoding', () => {
   assert.throws(
     () => decodeBookmarklet('javascript:%E0%A4%A'),
+    /Unable to decode bookmarklet: malformed percent encoding/,
+  );
+});
+
+test('normalizeScriptInput preserves percent characters in raw JavaScript', () => {
+  assert.equal(
+    normalizeScriptInput("const width = '100%';", 'raw'),
+    "const width = '100%';",
+  );
+});
+
+test('normalizeScriptInput decodes an encoded bookmarklet only when selected', () => {
+  assert.equal(
+    normalizeScriptInput('javascript:alert(%27hello%20world%27)', 'encoded-bookmarklet'),
+    "alert('hello world')",
+  );
+});
+
+test('normalizeScriptInput rejects malformed input only in encoded bookmarklet mode', () => {
+  assert.equal(normalizeScriptInput('100%', 'raw'), '100%');
+  assert.throws(
+    () => normalizeScriptInput('javascript:%E0%A4%A', 'encoded-bookmarklet'),
     /Unable to decode bookmarklet: malformed percent encoding/,
   );
 });

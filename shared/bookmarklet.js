@@ -22,3 +22,8 @@ export const decodeBookmarklet = (value) => {
     throw new Error('Unable to decode bookmarklet: malformed percent encoding.', { cause: error });
   }
 };
+
+export const normalizeScriptInput = (value, mode) => {
+  const source = stripBom(value);
+  return mode === 'encoded-bookmarklet' ? decodeBookmarklet(source) : source;
+};
