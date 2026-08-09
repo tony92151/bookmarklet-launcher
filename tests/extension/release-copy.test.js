@@ -12,3 +12,11 @@ test("extension UI identifies the product and links its safety disclosures", asy
   assert.match(popup, /id="recheck-user-scripts"/);
   assert.match(options, /privacy\.html/);
 });
+
+test("README documents Chrome-only support and the release package command", async () => {
+  const readme = await readFile("README.md", "utf8");
+
+  assert.match(readme, /Chrome 135\+/);
+  assert.doesNotMatch(readme, /Chrome\/Edge extension/);
+  assert.match(readme, /node scripts\/package-extension\.mjs/);
+});

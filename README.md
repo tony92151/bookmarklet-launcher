@@ -2,7 +2,7 @@
 
 Bookmarklet Launcher contains two related browser tools with one shared bookmarklet-conversion module:
 
-- **Bookmarklet Manager** — a Manifest V3 Chrome/Edge extension for saving and running trusted bookmarklets.
+- **Bookmarklet Script Manager** — a Manifest V3 Chrome extension for saving and running trusted bookmarklets.
 - **Bookmarklet site** — a static catalog and URL converter for installing bookmarklets without an extension.
 
 The project has no build step or external runtime dependencies.
@@ -14,18 +14,18 @@ The project has no build step or external runtime dependencies.
 - Automatically removes `javascript:` prefix and tries to decode URI percent-encoding
 - Uses `chrome.storage.local` to store scripts, supporting larger bookmarklet examples
 - Uses `chrome.userScripts.execute` to run in the current tab's `MAIN` world
-- Blocks execution on restricted pages like `chrome://`, `edge://`, `about:`, and extension pages
+- Blocks execution on restricted pages like `chrome://`, `about:`, and extension pages
 - Shows setup prompt in popup when "Allow user scripts" is not enabled
 
 ## Requirements
 
-- Chrome 135+ or compatible Chromium browser
+- Chrome 135+
 - Manifest V3 extension support
 - Must manually enable **Allow user scripts** for this extension
 
 ## Load the extension
 
-1. Open `chrome://extensions`. Edge users can open `edge://extensions`.
+1. Open `chrome://extensions`.
 2. Enable **Developer mode** in the top right.
 3. Click **Load unpacked**.
 4. Select this repository's root folder. `manifest.json` intentionally remains at the root so the extension can import `shared/` modules.
@@ -34,14 +34,14 @@ The project has no build step or external runtime dependencies.
 
 This extension uses Chrome's `userScripts` API to execute custom scripts. This API is designed by the browser for user custom scripts and behaves more like bookmarklets, but requires manually enabling the permission.
 
-1. Find **Bookmarklet Manager** in `chrome://extensions`.
+1. Find **Bookmarklet Script Manager** in `chrome://extensions`.
 2. Click **Details**.
 3. Enable **Allow user scripts**.
 4. If the popup still says it's not enabled, click **Reload** on the extension card, or restart the browser.
 
 ## Usage
 
-1. Click the Bookmarklet Manager icon in the toolbar.
+1. Click the Bookmarklet Script Manager icon in the toolbar.
 2. Click **Manage Scripts** to open the options page.
 3. Enter a script name, paste a `javascript:` bookmarklet or raw JavaScript.
 4. Click **Save**.
@@ -78,8 +78,22 @@ This is a pure frontend extension project with no dependencies to install.
 After modifying code:
 
 1. Go back to `chrome://extensions`.
-2. Click **Reload** on the Bookmarklet Manager card.
+2. Click **Reload** on the Bookmarklet Script Manager card.
 3. Reopen the popup or options page to test.
+
+## Chrome Web Store test release
+
+Bookmarklet Script Manager supports Chrome 135+ only. Create the submission
+archive with:
+
+```sh
+node scripts/package-extension.mjs
+```
+
+Before submitting a Chrome Web Store test release, follow the
+[release checklist](docs/chrome-web-store-release-checklist.md). The published
+[privacy policy](site/privacy.html) explains the extension's local-only data
+storage and use.
 
 Run the test suite with Node's ESM default enabled:
 
@@ -114,7 +128,7 @@ The core function of this tool is to execute JavaScript that you paste. Only sav
 - Scripts are not sent to remote services
 - Script data is stored in the browser's local `chrome.storage.local`
 - Scripts will not execute if `userScripts` permission is not enabled
-- Due to browser restrictions, cannot execute on `chrome://`, `edge://`, `about:`, `devtools:` or extension pages
+- Due to browser restrictions, cannot execute on `chrome://`, `about:`, `devtools:` or extension pages
 
 ## License
 
