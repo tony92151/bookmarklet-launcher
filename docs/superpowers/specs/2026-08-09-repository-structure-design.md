@@ -73,8 +73,13 @@ BOM, stripping a case-insensitive `javascript:` prefix, encoding JavaScript,
 creating a bookmarklet URL, and decoding a bookmarklet URL. It exports ESM
 functions directly and is imported by both products.
 
+<<<<<<< HEAD
 The site loads `../bookmarklets/catalog.json`, validates each local source
 path, loads the corresponding source from `../bookmarklets/`, and calls
+=======
+The site loads `bookmarklets/catalog.json`, validates each local source path,
+loads the corresponding source from `bookmarklets/`, and calls
+>>>>>>> 2d66145 (docs: define repository restructuring)
 `toBookmarkletUrl(source)` before setting an install link or copy value.
 `install-encoded.js` is removed: there is no DOM observer or second encoding
 pass.
@@ -90,6 +95,7 @@ Extension storage remains extension-specific because its interface depends on
 ## Pages Deployment
 
 A GitHub Actions workflow creates a Pages artifact by copying `site/`,
+<<<<<<< HEAD
 `shared/`, and `bookmarklets/` into one publish directory without flattening
 them, then deploys that artifact. This makes relative ESM imports and catalog
 source paths valid on the published site without exposing the extension package
@@ -99,6 +105,15 @@ as the website root.
 
 - Node tests run with `--experimental-default-type=module`, import the shared
   ESM module, and cover BOM handling, prefix
+=======
+`shared/`, and `bookmarklets/` into one publish directory, then deploys that
+artifact. This makes relative ESM imports and catalog source paths valid on the
+published site without exposing the extension package as the website root.
+
+## Testing and Acceptance
+
+- Node tests import the shared ESM module and cover BOM handling, prefix
+>>>>>>> 2d66145 (docs: define repository restructuring)
   removal, encoding, valid decoding, and malformed percent encoding.
 - Existing converter behavior is preserved through the shared module.
 - The static site contains no dependency on `window.BookmarkletConverter` and
