@@ -31,4 +31,8 @@ test("options editor provides explicit raw and encoded bookmarklet modes", async
   assert.match(options, /name="input-mode" value="encoded-bookmarklet"/);
   assert.match(script, /normalizeScriptInput/);
   assert.match(script, /inputMode/);
+  assert.ok(
+    options.indexOf('id="input-mode"') < options.indexOf('id="code"'),
+    'input mode choices appear before the code field',
+  );
 });

@@ -22,15 +22,15 @@
           Name
           <input type="text" id="name" placeholder="e.g., C1 Shopping Trips" required />
         </label>
-        <label>
-          Code (javascript: bookmarklet or raw JS)
-          <textarea id="code" rows="10" placeholder="javascript:(()=>{ ... })();  or  alert(document.title)" required></textarea>
-        </label>
         <fieldset id="input-mode">
           <legend>Input format</legend>
           <label><input type="radio" name="input-mode" value="raw" checked /> Raw JavaScript</label>
           <label><input type="radio" name="input-mode" value="encoded-bookmarklet" /> URL-encoded bookmarklet</label>
         </fieldset>
+        <label>
+          Code (javascript: bookmarklet or raw JS)
+          <textarea id="code" rows="10" placeholder="javascript:(()=>{ ... })();  or  alert(document.title)" required></textarea>
+        </label>
         <div class="form-actions">
           <button type="submit" class="primary-btn" id="save-btn">Save</button>
           <button type="button" class="ghost-btn hidden" id="cancel-btn">Cancel</button>
