@@ -16,6 +16,7 @@ const RELEASE_PATHS = ["manifest.json", "extension", "shared", "icons"];
 const DIST_DIRECTORY = "dist";
 const ARCHIVE_PATH = resolve(DIST_DIRECTORY, "bookmarklet-script-manager.zip");
 const ARCHIVE_TIMESTAMP = new Date("1980-01-01T00:00:00Z");
+const ARCHIVE_TIMEZONE = "UTC";
 
 try {
   await access("manifest.json");
@@ -38,6 +39,7 @@ try {
   try {
     execFileSync("zip", ["-X", "-q", ARCHIVE_PATH, ...archiveEntries], {
       cwd: stagingDirectory,
+      env: { ...process.env, TZ: ARCHIVE_TIMEZONE },
     });
   } catch (error) {
     if (error.code === "ENOENT") {

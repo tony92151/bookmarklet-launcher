@@ -25,7 +25,7 @@ Manager to the Chrome Web Store.
 - [ ] Upload `dist/bookmarklet-script-manager.zip` as a Chrome Web Store test
   release, not a production rollout.
 - [ ] Complete the Chrome Web Store privacy field with the published privacy
-  policy: `https://tony92151.github.io/bookmarklet-launcher/privacy.html`.
+  policy: `https://tony92151.github.io/bookmarklet-launcher/site/privacy.html`.
 - [ ] Set the support URL to GitHub Issues:
   `https://github.com/tony92151/bookmarklet-launcher/issues`.
 
@@ -35,9 +35,16 @@ Manager to the Chrome Web Store.
   popup and options pages open.
 - [ ] Confirm the extension requests only `userScripts`, `storage`, and
   `activeTab` permissions, and does not request host permissions.
-- [ ] Add a user-provided bookmarklet script, run it on an intended page, and
-  confirm the user can disable or remove it afterwards.
+- [ ] Add a user-provided bookmarklet script, edit it, and close and reopen the
+  options page and popup to confirm each saved change persists. Delete the
+  script and confirm it remains deleted after reopening the extension.
+- [ ] Attempt to run a saved script on a restricted page such as
+  `chrome://extensions`; confirm the script does not run and the popup reports
+  that execution is not allowed on the page.
 - [ ] Confirm the safety guidance says to run only scripts the user trusts, and
   the re-check action remains available after installation.
+- [ ] Uninstall and reinstall the same test-release package; confirm previously
+  saved scripts are absent and the first-run user-scripts setup guidance is
+  shown again.
 - [ ] Open the privacy policy and GitHub Issues support URL from the listing to
   verify they are publicly reachable.

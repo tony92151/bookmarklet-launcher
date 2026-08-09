@@ -24,6 +24,7 @@ The project has no build step or external runtime dependencies.
 - Chrome 135+
 - Manifest V3 extension support
 - Must manually enable **Allow user scripts** for this extension
+- The `zip` command-line utility on `PATH` when creating a release package
 
 ## Load the extension
 
