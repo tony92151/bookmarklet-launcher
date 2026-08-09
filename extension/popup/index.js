@@ -93,6 +93,7 @@ function wireNav() {
   document.getElementById("open-extensions").addEventListener("click", () => {
     chrome.tabs.create({ url: "chrome://extensions" });
   });
+  document.getElementById("recheck-user-scripts").addEventListener("click", checkUserScripts);
 }
 
 async function init() {

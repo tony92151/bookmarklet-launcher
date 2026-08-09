@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bookmarklet Manager</title>
+  <title>Bookmarklet Script Manager</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>Manage Scripts</h1>
+      <h1>Bookmarklet Script Manager</h1>
       <p class="sub">Add your own bookmarklets. Paste a <code>javascript:</code> bookmarklet or raw JavaScript, and the system will automatically decode it.</p>
+      <p class="sub">Custom scripts can read and change the page where you run them. Only run scripts you trust.</p>
+      <p class="sub" lang="zh-Hant">自訂指令碼可以讀取及變更您執行指令碼的頁面。請僅執行您信任的指令碼。</p>
     </header>
 
     <section class="card">
@@ -37,6 +39,10 @@
       <ul id="list"></ul>
       <p id="list-empty" class="empty hidden">No scripts yet.</p>
     </section>
+
+    <footer>
+      <a href="https://tony92151.github.io/bookmarklet-launcher/site/privacy.html" target="_blank" rel="noreferrer">Privacy / 隱私權政策</a>
+    </footer>
   </div>
 
   <script type="module" src="index.js"></script>

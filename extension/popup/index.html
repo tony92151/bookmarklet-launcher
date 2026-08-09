@@ -7,14 +7,17 @@
 </head>
 <body>
   <header>
-    <h1>Bookmarklet Manager</h1>
+    <h1>Bookmarklet Script Manager</h1>
   </header>
 
   <div id="setup-banner" class="banner hidden">
     <strong>Allow user scripts needs to be enabled</strong>
     <p>Go to <code>chrome://extensions</code> -> This extension's "Details" -> Enable "Allow user scripts" to run scripts.</p>
     <p class="banner-hint">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
+    <p class="banner-hint">Custom scripts can read and change this page. Only run scripts you trust.</p>
+    <p class="banner-hint" lang="zh-Hant">自訂指令碼可以讀取及變更此頁面。請僅執行您信任的指令碼。</p>
     <button id="open-extensions" class="link-btn">Open Extensions Page</button>
+    <button id="recheck-user-scripts" class="link-btn">I've enabled it — recheck</button>
   </div>
 
   <div id="status" class="status hidden"></div>

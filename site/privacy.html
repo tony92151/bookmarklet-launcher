@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Privacy policy for Bookmarklet Script Manager.">
+  <title>Privacy Policy | Bookmarklet Script Manager</title>
+  <link rel="stylesheet" href="assets/privacy.css">
+</head>
+<body>
+  <main class="policy">
+    <a class="back-link" href="./">← Bookmarklet Launcher</a>
+
+    <h1>Privacy Policy / 隱私權政策</h1>
+    <p class="updated">Last updated: August 9, 2026 / 最後更新：2026 年 8 月 9 日</p>
+
+    <section>
+      <h2>Summary / 摘要</h2>
+      <p>Bookmarklet Script Manager's built-in script-management features operate on your device. Script names and source are stored only in <code>chrome.storage.local</code>.</p>
+      <p>Bookmarklet Script Manager 的內建指令碼管理功能會在您的裝置上運作。指令碼名稱與原始碼只會儲存在 <code>chrome.storage.local</code>。</p>
+      <p>The extension itself does not send scripts, page content, browsing data, or personal information to the developer or other third parties.</p>
+      <p>擴充功能本身不會將指令碼、網頁內容、瀏覽資料或個人資訊傳送給開發者或其他第三方。</p>
+    </section>
+
+    <section>
+      <h2>Data storage and transfer / 資料儲存與傳輸</h2>
+      <p>Your saved script names and source code stay in your browser's local extension storage. They are not sent to a remote service by the extension, collected by the developer, or shared by the developer with third parties.</p>
+      <p>您儲存的指令碼名稱與原始碼會留在瀏覽器的本機擴充功能儲存空間。擴充功能不會將它們傳送到遠端服務，開發者也不會蒐集它們或與第三方分享。</p>
+      <p>Custom scripts run in the page's <code>MAIN</code> world. Depending on their code, they may read or modify page data and may communicate with external services. Any such communication is initiated by the user-selected script, not by Bookmarklet Script Manager or its developer. Review and trust a script before running it.</p>
+      <p>自訂指令碼會在網頁的 <code>MAIN</code> world 中執行。視其程式碼而定，它們可能讀取或修改網頁資料，也可能與外部服務通訊。此類通訊是由使用者所選的指令碼發起，而不是由 Bookmarklet Script Manager 或其開發者發起。請先檢視並確認您信任該指令碼，再加以執行。</p>
+    </section>
+
+    <section>
+      <h2>Permissions / 權限</h2>
+      <dl>
+        <dt><code>storage</code></dt>
+        <dd>Stores the script names and source you save locally in the browser.</dd>
+        <dd>在瀏覽器本機儲存您儲存的指令碼名稱與原始碼。</dd>
+
+        <dt><code>activeTab</code></dt>
+        <dd>Lets a script run only on the tab you actively choose when you invoke it.</dd>
+        <dd>只有在您主動選擇並執行指令碼時，才讓指令碼在該分頁上運作。</dd>
+
+        <dt><code>userScripts</code></dt>
+        <dd>Lets the extension run the custom scripts you have saved on the page you choose.</dd>
+        <dd>讓擴充功能在您選擇的網頁上執行您已儲存的自訂指令碼。</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Support / 支援</h2>
+      <p>For privacy questions or support, please open an issue in <a href="https://github.com/tony92151/bookmarklet-launcher/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a>.</p>
+      <p>如有隱私權問題或需要支援，請在 <a href="https://github.com/tony92151/bookmarklet-launcher/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a> 提出問題。</p>
+    </section>
+  </main>
+</body>
+</html>
