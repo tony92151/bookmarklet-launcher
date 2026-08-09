@@ -1,6 +1,8 @@
-# Bookmarklet Launcher
+# Bookmarklet Script Manager
 
-Bookmarklet Launcher contains two related browser tools with one shared bookmarklet-conversion module:
+Bookmarklet Script Manager is a Chrome extension for saving and running trusted
+bookmarklets. This repository also includes a companion bookmarklet site; both
+tools share one bookmarklet-conversion module:
 
 - **Bookmarklet Script Manager** — a Manifest V3 Chrome extension for saving and running trusted bookmarklets.
 - **Bookmarklet site** — a static catalog and URL converter for installing bookmarklets without an extension.
