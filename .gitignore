@@ -41,3 +41,6 @@ web-ext-artifacts/
 
 # Local Superpowers brainstorming runtime artifacts
 .superpowers/
+
+# Local linked worktrees
+.worktrees/
