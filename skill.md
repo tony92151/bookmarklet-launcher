@@ -1,44 +1,44 @@
 ---
 name: make-bookmarklet
-description: 根據使用者描述的需求,產生一個可貼進 Bookmarklet Manager 擴充功能的書籤腳本 (bookmarklet)。當使用者說「幫我做一個書籤腳本」「我想在網頁上一鍵做某件事」或描述想自動化的頁面操作時使用。
+description: Use when a user wants a bookmarklet for the Bookmarklet Manager extension, asks to perform a webpage action in one click, or describes a browser-page automation task.
 ---
 
-# 產生書籤腳本
+# Create a Bookmarklet
 
-使用者會描述他想在網頁上一鍵完成的事情(例如:抓取頁面表格、自動填表、修改頁面樣式、擷取資料下載成檔案)。你的任務是把描述轉成一段可執行的 JavaScript,存成檔案,並告訴使用者怎麼加進擴充功能。
+The user will describe something they want to accomplish on a webpage with one click (for example, extracting a page table, automatically filling a form, changing page styles, or extracting data to download as a file). Turn that description into executable JavaScript, save it as a file, and explain how to add it to the extension.
 
-引數(`$ARGUMENTS`)若有內容,就是需求描述;若為空,請先問使用者想做什麼。
+If `$ARGUMENTS` has content, treat it as the requirements description. If it is empty, first ask the user what they want to do.
 
-## 執行環境(重要,決定你能寫什麼)
+## Execution Environment
 
-腳本由本 repo 的 Bookmarklet Manager 擴充功能執行,透過 `chrome.userScripts.execute` 注入:
+Scripts are injected by this repository's Bookmarklet Manager extension through `chrome.userScripts.execute`:
 
-- 在頁面的 **MAIN world** 執行 — 可以存取頁面自己的全域變數、框架(React/Vue 實例等)、直接操作 DOM。
-- **不受網站 CSP 限制** — 可以 `fetch`、動態建 script、開新視窗。
-- 是一段一次性執行的程式碼字串,**不是 module** — 不能用 `import`/`export`。
-- 沒有 `chrome.*` 擴充功能 API — 就是普通的頁面 JavaScript。
-- 無法在 `chrome://`、`edge://`、擴充功能頁等受限頁面執行。
+- They run in the page's **MAIN world**, so they can access the page's global variables and framework instances (such as React/Vue), and manipulate the DOM directly.
+- They are **not restricted by the website's CSP**, so they may use `fetch`, dynamically load scripts, and open new windows.
+- They are one-time executable code strings, **not modules**: do not use `import` or `export`.
+- They do not have access to the `chrome.*` extension APIs; they are ordinary page JavaScript.
+- They cannot run on restricted pages such as `chrome://`, `edge://`, or extension pages.
 
-## 撰寫規範
+## Writing Guidelines
 
-1. **整段包在 IIFE 裡**:`(() => { ... })();` — 避免污染頁面全域、避免重複執行時 `const` 重宣告錯誤。
-2. **輸出「原始 JS」而非 `javascript:` URL** — 擴充功能兩種都收,但原始 JS 可讀性好、方便使用者日後修改。不要做百分比編碼。
-3. **給使用者看得到的回饋**:操作完成或失敗時,用 `alert()`、頁面上的 toast、或 `console.log` 明確告知結果。靜默失敗是最糟的體驗。
-4. **防禦性選取 DOM**:選取器找不到元素時要有清楚的錯誤訊息(例如 `alert("找不到 XXX,請確認你在正確的頁面上")`),不要讓它丟出未捕捉的例外。
-5. **需要等待的操作**(捲動載入、SPA 換頁)用 `async` IIFE + 輪詢/`MutationObserver`,並設定逾時上限。
-6. **下載資料**用 Blob + 暫時的 `<a download>`;**複製到剪貼簿**用 `navigator.clipboard.writeText`(需要頁面在焦點中,失敗時 fallback 成顯示文字讓使用者手動複製)。
-7. 程式碼加上簡短註解,說明每個區塊在做什麼,方便使用者日後調整。
+1. **Wrap the entire script in an IIFE**: `(() => { ... })();`. This avoids polluting page globals and prevents `const` redeclaration errors when the script is run more than once.
+2. **Output raw JavaScript, not a `javascript:` URL.** The extension accepts both, but raw JavaScript is easier to read and modify later. Do not percent-encode it.
+3. **Give the user visible feedback.** On completion or failure, clearly report the result with `alert()`, an in-page toast, or `console.log`. Silent failures create a poor experience.
+4. **Use defensive DOM selection.** When a selector cannot find an element, show a clear error such as `alert("Could not find XXX. Please confirm that you are on the correct page.")` instead of throwing an uncaught exception.
+5. **For operations that must wait** (infinite scrolling, SPA navigation), use an async IIFE plus polling or a `MutationObserver`, with a timeout limit.
+6. **To download data**, use a Blob and a temporary `<a download>` element. **To copy to the clipboard**, use `navigator.clipboard.writeText` (the page must be focused); if it fails, display the text so the user can copy it manually.
+7. Add concise comments explaining what each code section does, so the user can adjust it later.
 
-參考範例:repo 根目錄的 `c1_trip_example.txt`、`c1_hotel_reward.txt` 是實際使用中的腳本(百分比編碼的 `javascript:` 形式),展示了分頁抓取、輪詢等待等模式。
+Reference examples: `c1_trip_example.txt` and `c1_hotel_reward.txt` in the repository root are production scripts in percent-encoded `javascript:` format. They demonstrate patterns such as paginated extraction and polling waits.
 
-## 流程
+## Workflow
 
-1. **釐清需求**:如果描述不夠明確(不知道目標網站、不知道要抓什麼欄位、不知道輸出形式),先問清楚再寫。關鍵問題通常是:哪個網站/頁面?觸發後要發生什麼?結果要以什麼形式呈現(alert、下載檔案、複製、修改頁面)?
-2. **了解目標頁面**(如果可能):若使用者提供了 URL 且是公開頁面,可用 WebFetch 看頁面結構來決定選取器;若是登入後頁面,請使用者貼上相關的 HTML 片段,或先寫一版並提醒選取器可能需要根據實際頁面調整。
-3. **撰寫腳本**,遵守上面的規範。
-4. **存檔**:寫到 repo 根目錄 `scripts/<kebab-case-名稱>.js`(`scripts/` 不存在就建立)。
-5. **告訴使用者怎麼用**:
-   - 開啟擴充功能彈出視窗 → ⚙️ 管理腳本
-   - 名稱填腳本用途,程式碼欄貼上檔案內容,按儲存
-   - 之後到目標頁面,點工具列圖示 → 點該腳本執行
-6. **主動提出測試建議**:說明在哪個頁面測試、預期看到什麼,以及若選取器失效該回報什麼資訊(例如按 F12 看 console 錯誤)。
+1. **Clarify the requirements.** If the description is not specific enough (the target site, fields to extract, or output format are unknown), ask before writing. Typical questions: Which website/page? What should happen after it runs? How should the result be presented (alert, file download, copy, or page modification)?
+2. **Understand the target page when possible.** If the user provides a URL for a public page, use WebFetch to inspect its structure and choose selectors. For pages behind a login, ask the user to share the relevant HTML snippet, or draft an initial version while warning that its selectors may need adjustment on the actual page.
+3. **Write the script** according to the guidelines above.
+4. **Save the script** at `scripts/<kebab-case-name>.js` in the repository root. Create `scripts/` if it does not exist.
+5. **Explain how to use it**:
+   - Open the extension popup → ⚙️ Manage Scripts.
+   - Enter a descriptive script name, paste the file contents into the code field, then save.
+   - On the target page, click the toolbar icon, then click the script to run it.
+6. **Proactively suggest how to test it.** State which page to test, what the user should expect, and what information to report if the selector fails (for example, console errors visible in DevTools with F12).
