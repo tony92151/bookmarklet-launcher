@@ -22,3 +22,13 @@ test("README documents Chrome-only support and the release package command", asy
   assert.doesNotMatch(readme, /Chrome\/Edge extension/);
   assert.match(readme, /node scripts\/package-extension\.mjs/);
 });
+
+test("options editor provides explicit raw and encoded bookmarklet modes", async () => {
+  const options = await readFile("extension/options/index.html", "utf8");
+  const script = await readFile("extension/options/index.js", "utf8");
+
+  assert.match(options, /name="input-mode" value="raw"[^>]*checked/);
+  assert.match(options, /name="input-mode" value="encoded-bookmarklet"/);
+  assert.match(script, /normalizeScriptInput/);
+  assert.match(script, /inputMode/);
+});

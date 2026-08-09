@@ -10,7 +10,7 @@
   <div class="wrap">
     <header>
       <h1>Bookmarklet Script Manager</h1>
-      <p class="sub">Add your own bookmarklets. Paste a <code>javascript:</code> bookmarklet or raw JavaScript, and the system will automatically decode it.</p>
+      <p class="sub">Add your own scripts. Choose whether the code is raw JavaScript or a URL-encoded <code>javascript:</code> bookmarklet.</p>
       <p class="sub">Custom scripts can read and change the page where you run them. Only run scripts you trust.</p>
       <p class="sub" lang="zh-Hant">自訂指令碼可以讀取及變更您執行指令碼的頁面。請僅執行您信任的指令碼。</p>
     </header>
@@ -26,6 +26,11 @@
           Code (javascript: bookmarklet or raw JS)
           <textarea id="code" rows="10" placeholder="javascript:(()=>{ ... })();  or  alert(document.title)" required></textarea>
         </label>
+        <fieldset id="input-mode">
+          <legend>Input format</legend>
+          <label><input type="radio" name="input-mode" value="raw" checked /> Raw JavaScript</label>
+          <label><input type="radio" name="input-mode" value="encoded-bookmarklet" /> URL-encoded bookmarklet</label>
+        </fieldset>
         <div class="form-actions">
           <button type="submit" class="primary-btn" id="save-btn">Save</button>
           <button type="button" class="ghost-btn hidden" id="cancel-btn">Cancel</button>

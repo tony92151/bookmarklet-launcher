@@ -1,4 +1,4 @@
-import { decodeBookmarklet } from "../../shared/bookmarklet.js";
+import { normalizeScriptInput } from "../../shared/bookmarklet.js";
 import {
   getScripts,
   saveScript,
@@ -19,6 +19,14 @@ const countEl = document.getElementById("count");
 
 let editingId = null;
 
+function inputMode() {
+  return document.querySelector('input[name="input-mode"]:checked').value;
+}
+
+function resetInputMode() {
+  document.querySelector('input[name="input-mode"][value="raw"]').checked = true;
+}
+
 function setHint(text) {
   formHint.textContent = text;
   if (text) {
@@ -35,6 +43,7 @@ function enterEditMode(script) {
   cancelBtn.classList.remove("hidden");
   nameInput.value = script.name;
   codeInput.value = script.code;
+  resetInputMode();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -44,6 +53,7 @@ function exitEditMode() {
   saveBtn.textContent = "Save";
   cancelBtn.classList.add("hidden");
   form.reset();
+  resetInputMode();
 }
 
 function renderList(scripts) {
@@ -100,10 +110,9 @@ async function onDelete(script) {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = nameInput.value.trim();
-  const wasBookmarklet = /^\s*javascript:/i.test(codeInput.value);
   let code;
   try {
-    code = decodeBookmarklet(codeInput.value.trim()).trim();
+    code = normalizeScriptInput(codeInput.value.trim(), inputMode()).trim();
   } catch (error) {
     setHint(error instanceof Error ? error.message : String(error));
     return;
@@ -121,7 +130,7 @@ form.addEventListener("submit", async (e) => {
   } else {
     await saveScript({ name, code });
     form.reset();
-    setHint(wasBookmarklet ? "Decoded bookmarklet and saved." : "Saved.");
+    setHint(inputMode() === "encoded-bookmarklet" ? "Decoded bookmarklet and saved." : "Saved.");
   }
   await refresh();
 });
