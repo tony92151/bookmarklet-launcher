@@ -1,10 +1,10 @@
-import { decodeBookmarklet } from "./lib/decode.js";
+import { decodeBookmarklet } from "../../shared/bookmarklet.js";
 import {
   getScripts,
   saveScript,
   updateScript,
   deleteScript,
-} from "./lib/storage.js";
+} from "../storage.js";
 
 const form = document.getElementById("script-form");
 const nameInput = document.getElementById("name");
@@ -100,7 +100,14 @@ async function onDelete(script) {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = nameInput.value.trim();
-  const { code, wasBookmarklet } = decodeBookmarklet(codeInput.value);
+  const wasBookmarklet = /^\s*javascript:/i.test(codeInput.value);
+  let code;
+  try {
+    code = decodeBookmarklet(codeInput.value.trim()).trim();
+  } catch (error) {
+    setHint(error instanceof Error ? error.message : String(error));
+    return;
+  }
 
   if (!code) {
     setHint("Code cannot be empty.");

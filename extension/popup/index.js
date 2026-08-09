@@ -1,4 +1,4 @@
-import { getScripts } from "./lib/storage.js";
+import { getScripts } from "../storage.js";
 
 const listEl = document.getElementById("script-list");
 const emptyEl = document.getElementById("empty");
@@ -36,14 +36,6 @@ function errorMessage(code) {
 }
 
 async function detectUserScripts() {
-  if (chrome.userScripts) {
-    try {
-      await chrome.userScripts.getScripts();
-      return true;
-    } catch {
-      return false;
-    }
-  }
   try {
     const res = await chrome.runtime.sendMessage({ type: "CHECK_USERSCRIPTS" });
     return !!res?.available;
@@ -55,30 +47,6 @@ async function detectUserScripts() {
 async function runScript(code) {
   if (!userScriptsOk) {
     promptSetup();
-    return;
-  }
-
-  if (chrome.userScripts && typeof chrome.userScripts.execute === "function") {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab || tab.id == null) {
-      showStatus(errorMessage("NO_ACTIVE_TAB"), "err");
-      return;
-    }
-    if (tab.url && /^(chrome|edge|about|chrome-extension|devtools):/i.test(tab.url)) {
-      showStatus(errorMessage("RESTRICTED_PAGE"), "err");
-      return;
-    }
-    try {
-      await chrome.userScripts.execute({
-        target: { tabId: tab.id },
-        world: "MAIN",
-        injectImmediately: true,
-        js: [{ code }],
-      });
-      window.close();
-    } catch (e) {
-      showStatus(errorMessage(String(e?.message || e)), "err");
-    }
     return;
   }
 

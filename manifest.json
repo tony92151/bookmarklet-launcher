@@ -6,18 +6,18 @@
   "minimum_chrome_version": "135",
   "permissions": ["userScripts", "storage", "activeTab"],
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "extension/background.js",
     "type": "module"
   },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "extension/popup/index.html",
     "default_title": "Bookmarklet Manager",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png"
     }
   },
-  "options_page": "options.html",
+  "options_page": "extension/options/index.html",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
