@@ -10,7 +10,7 @@
         "en": "Shows the category extracted from each booking icon beside the booking title.",
         "zh-TW": "在每筆訂單標題旁顯示從分類圖示解析出的分類。"
       },
-      "source": "scripts/klook-booking-category-label.js",
+      "source": "../bookmarklets/klook-booking-category-label.js",
       "matches": [
         "https://www.klook.com/*/bookings/"
       ],

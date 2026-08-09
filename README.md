@@ -1,10 +1,13 @@
-# Bookmarklet Manager
+# Bookmarklet Launcher
 
-Bookmarklet Manager is a Manifest V3 Chrome/Edge extension for managing your bookmarklets in one place. You can paste a `javascript:` bookmarklet or raw JavaScript, then click to execute it in the current tab from the toolbar popup — similar to traditional browser bookmarklets.
+Bookmarklet Launcher contains two related browser tools with one shared bookmarklet-conversion module:
 
-This project has no build step and no external dependencies. Just load it as an unpacked extension to use.
+- **Bookmarklet Manager** — a Manifest V3 Chrome/Edge extension for saving and running trusted bookmarklets.
+- **Bookmarklet site** — a static catalog and URL converter for installing bookmarklets without an extension.
 
-## Features
+The project has no build step or external runtime dependencies.
+
+## Extension features
 
 - Add, edit, and delete custom scripts
 - Supports `javascript:` bookmarklets and raw JavaScript
@@ -20,12 +23,12 @@ This project has no build step and no external dependencies. Just load it as an 
 - Manifest V3 extension support
 - Must manually enable **Allow user scripts** for this extension
 
-## Installation
+## Load the extension
 
 1. Open `chrome://extensions`. Edge users can open `edge://extensions`.
 2. Enable **Developer mode** in the top right.
 3. Click **Load unpacked**.
-4. Select this repo folder.
+4. Select this repository's root folder. `manifest.json` intentionally remains at the root so the extension can import `shared/` modules.
 
 ## One-time Setup: Enable User Scripts
 
@@ -56,7 +59,17 @@ Or:
 javascript:(()=>alert(document.title))();
 ```
 
-The `c1_*.txt` files in the repo are larger bookmarklet test data, useful for verifying the storage and decoding flow.
+The files in `fixtures/` are larger bookmarklet test data, useful for verifying the storage and decoding flow.
+
+## Bookmarklet site
+
+The static catalog lives at `site/index.html`; the URL converter is at `site/converter/index.html`. In a GitHub Pages deployment their URLs are `/site/` and `/site/converter/`.
+
+The catalog is `bookmarklets/catalog.json`, and each local bookmarklet source lives beside it in `bookmarklets/`. The site validates catalog source paths and creates encoded bookmarklet URLs with `shared/bookmarklet.js`.
+
+## GitHub Pages
+
+The included Pages workflow copies `site/`, `shared/`, and `bookmarklets/` into a single deployment artifact. Configure the repository's Pages source as **GitHub Actions**; do not select a branch directory as the Pages source. After a push to `main`, open the deployed `/site/` path.
 
 ## Development
 
@@ -68,6 +81,12 @@ After modifying code:
 2. Click **Reload** on the Bookmarklet Manager card.
 3. Reopen the popup or options page to test.
 
+Run the test suite with Node's ESM default enabled:
+
+```sh
+node --experimental-default-type=module --test
+```
+
 To check manifest JSON format:
 
 ```sh
@@ -77,14 +96,14 @@ python3 -m json.tool manifest.json
 ## File Structure
 
 ```text
-manifest.json      MV3 manifest, permissions, popup, options page config
-background.js      service worker fallback, can call userScripts.execute
-popup.html/css/js  toolbar popup: show script list, check setup, run scripts
-options.html/css/js management page: add, edit, delete scripts
-lib/decode.js      normalize bookmarklet input to raw JavaScript
-lib/storage.js     chrome.storage.local script read/write wrapper
+manifest.json      MV3 manifest and extension entry points
+extension/         background, popup, options, and storage modules
+site/              static bookmarklet catalog and converter pages
+shared/            bookmarklet URL conversion module
+bookmarklets/      catalog metadata and bookmarklet source files
+fixtures/          bookmarklet test data
+tests/             Node tests for shared, site, and extension contracts
 icons/             extension icons
-c1_*.txt           bookmarklet test data
 ```
 
 ## Security and Limitations
