@@ -38,3 +38,6 @@ web-ext-artifacts/
 
 .codex
 .agents
+
+# Local Superpowers brainstorming runtime artifacts
+.superpowers/
