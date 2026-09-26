@@ -15,6 +15,7 @@ button { cursor: pointer; }
 .brand img { border-radius: 12px; }
 .eyebrow { margin: 0 0 2px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .15em; }
 .brand-name { margin: 0; font-size: 16px; font-weight: 750; letter-spacing: -.025em; }
+.version { margin-left: auto; padding: 5px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 11px; font-weight: 700; white-space: nowrap; }
 .intro { margin-top: 49px; }
 .intro h1 { margin: 6px 0 10px; font-size: clamp(30px, 4vw, 44px); line-height: 1.1; letter-spacing: -.055em; }
 .sub { max-width: 590px; margin: 0; color: var(--muted); font-size: 14px; }

@@ -6,6 +6,9 @@ import {
   deleteScript,
 } from "../storage.js";
 
+const versionEl = document.getElementById("extension-version");
+versionEl.textContent = `Version ${chrome.runtime.getManifest().version}`;
+
 const form = document.getElementById("script-form");
 const nameInput = document.getElementById("name");
 const codeInput = document.getElementById("code");
