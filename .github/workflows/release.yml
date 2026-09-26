@@ -1,0 +1,57 @@
+name: Release Chrome extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Chrome extension version from manifest.json (for example, 1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: extension-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check branch and release version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Run this workflow from the main branch." >&2
+            exit 1
+          fi
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" \
+            --jq '.[] | select(.draft == false) | .tag_name' \
+            > "$RUNNER_TEMP/release-tags.txt"
+          RELEASE_TAGS_FILE="$RUNNER_TEMP/release-tags.txt" node scripts/check-release-version.mjs
+      - name: Test and package extension
+        run: |
+          node --experimental-default-type=module --test
+          python3 -m json.tool manifest.json > /dev/null
+          node scripts/package-extension.mjs
+          unzip -tq dist/bookmarklet-script-manager.zip
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${RELEASE_VERSION}" \
+            dist/bookmarklet-script-manager.zip \
+            --target "$GITHUB_SHA" \
+            --title "v${RELEASE_VERSION}" \
+            --generate-notes

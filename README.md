@@ -84,6 +84,19 @@ After modifying code:
 2. Click **Reload** on the Bookmarklet Script Manager card.
 3. Reopen the popup or options page to test.
 
+## GitHub extension releases
+
+For the first release, use the current `manifest.json` version. For later releases,
+update `manifest.json` to the next Chrome extension version in a PR and merge it
+to `main`. Then open **Actions → Release Chrome extension → Run workflow** on
+`main` and enter that exact version without a `v` prefix (for example, `1.0.1`).
+The workflow checks that the input matches the manifest and is greater than
+all published GitHub Release versions. After tests pass, it builds the extension
+ZIP, creates a `v<version>` tag at the tested commit, and publishes the ZIP on
+[GitHub Releases](https://github.com/tony92151/bookmarklet-launcher/releases).
+The existing tag name must be available. The ZIP is the extension package;
+GitHub Releases do not publish it to the Chrome Web Store.
+
 ## Chrome Web Store test release
 
 Bookmarklet Script Manager supports Chrome 135+ only. Create the submission
