@@ -18,6 +18,7 @@ The project has no build step or external runtime dependencies.
 - Uses `chrome.userScripts.execute` to run in the current tab's `MAIN` world
 - Blocks execution on restricted pages like `chrome://`, `about:`, and extension pages
 - Shows setup prompt in popup when "Allow user scripts" is not enabled
+- Offers a "Test This Page" probe while user scripts are disabled; it checks whether a temporary Blob script can run on the current page without running saved scripts
 
 ## Requirements
 
@@ -41,6 +42,10 @@ This extension uses Chrome's `userScripts` API to execute custom scripts. This A
 2. Click **Details**.
 3. Enable **Allow user scripts**.
 4. If the popup still says it's not enabled, click **Reload** on the extension card, or restart the browser.
+
+When the toggle is off, **Test This Page** checks whether a simple temporary
+Blob script can run on the current tab. Passing this diagnostic does not enable
+saved scripts or guarantee that every bookmarklet will work.
 
 ## Usage
 

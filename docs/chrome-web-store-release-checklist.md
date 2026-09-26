@@ -33,8 +33,11 @@ Manager to the Chrome Web Store.
 
 - [ ] In a clean Chrome 135+ profile, install the test release and confirm the
   popup and options pages open.
-- [ ] Confirm the extension requests only `userScripts`, `storage`, and
-  `activeTab` permissions, and does not request host permissions.
+- [ ] Confirm the extension requests only `userScripts`, `scripting`, `storage`,
+  and `activeTab` permissions, and does not request host permissions.
+- [ ] With Allow user scripts disabled, confirm Test This Page reports a result
+  on a regular website and does not run any saved script. Confirm the test
+  button is hidden after enabling Allow user scripts.
 - [ ] Add a user-provided bookmarklet script, edit it, and close and reopen the
   options page and popup to confirm each saved change persists. Delete the
   script and confirm it remains deleted after reopening the extension.

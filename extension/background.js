@@ -1,7 +1,9 @@
 import { createScriptRunner } from './script-runner.js';
+import { createPageProbe } from './page-probe.js';
 import { deleteScript, saveScript, updateScript } from './storage.js';
 
 const runner = createScriptRunner(chrome);
+const pageProbe = createPageProbe(chrome);
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (sender.id && sender.id !== chrome.runtime.id) return false;
@@ -17,6 +19,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     runner.run(msg.code)
       .then(sendResponse)
       .catch(() => sendResponse({ ok: false, error: 'CHROME_API_ERROR' }));
+    return true;
+  }
+
+  if (msg?.type === 'PROBE_PAGE') {
+    pageProbe.probe()
+      .then(sendResponse)
+      .catch(() => sendResponse({ ok: false, error: 'INJECTION_FAILED' }));
     return true;
   }
 

@@ -39,6 +39,39 @@ function errorMessage(code) {
   }
 }
 
+function probeMessage(result) {
+  if (result?.ok) {
+    return 'Basic test passed on this page. Some bookmarklets may still fail.';
+  }
+  switch (result?.error) {
+    case 'BLOB_BLOCKED':
+      return 'This page blocked the test script. Its security settings may prevent this method.';
+    case 'PROBE_NO_SIGNAL':
+      return 'The test script did not run on this page.';
+    case 'RESTRICTED_PAGE':
+      return 'This browser page does not allow extensions to run scripts.';
+    case 'NO_ACTIVE_TAB':
+      return 'No active tab found to test.';
+    default:
+      return 'Could not test this page. Try a regular website.';
+  }
+}
+
+async function testThisPage() {
+  const button = document.getElementById('test-this-page');
+  button.disabled = true;
+  button.textContent = 'Testing…';
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'PROBE_PAGE' });
+    showStatus(probeMessage(result), result?.ok ? 'ok' : 'err');
+  } catch {
+    showStatus(probeMessage(null), 'err');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Test This Page';
+  }
+}
+
 async function detectUserScripts() {
   try {
     const res = await chrome.runtime.sendMessage({ type: "CHECK_USERSCRIPTS" });
@@ -112,6 +145,7 @@ function wireNav() {
     chrome.tabs.create({ url: "chrome://extensions" });
   });
   document.getElementById("recheck-user-scripts").addEventListener("click", checkUserScripts);
+  document.getElementById('test-this-page').addEventListener('click', testThisPage);
 }
 
 async function init() {

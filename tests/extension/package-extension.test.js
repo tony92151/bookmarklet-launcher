@@ -44,6 +44,7 @@ test("release packager creates a deterministic archive without stale entries", a
     "extension/options/index.html",
     "extension/options/index.js",
     "extension/options/styles.css",
+    "extension/page-probe.js",
     "extension/popup/index.html",
     "extension/popup/index.js",
     "extension/popup/styles.css",
