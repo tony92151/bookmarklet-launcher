@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 test('privacy policy discloses local storage, no transfer, permissions, and support', async () => {
   const policy = await readFile('site/privacy.html', 'utf8');
 
-  for (const phrase of ['chrome.storage.local', 'not sent', 'activeTab', 'storage', 'userScripts', 'GitHub Issues']) {
+  for (const phrase of ['chrome.storage.local', 'not sent', 'activeTab', 'storage', 'userScripts', 'scripting', 'GitHub Issues']) {
     assert.match(policy, new RegExp(phrase, 'i'));
   }
 

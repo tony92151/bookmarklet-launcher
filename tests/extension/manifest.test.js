@@ -8,4 +8,6 @@ test('manifest points to grouped extension entry points', async () => {
   assert.equal(manifest.background.service_worker, 'extension/background.js');
   assert.equal(manifest.action.default_popup, 'extension/popup/index.html');
   assert.equal(manifest.options_page, 'extension/options/index.html');
+  assert.ok(manifest.permissions.includes('scripting'));
+  assert.equal(manifest.host_permissions, undefined);
 });
