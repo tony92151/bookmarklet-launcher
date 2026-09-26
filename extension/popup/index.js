@@ -1,4 +1,4 @@
-import { getScripts } from "../storage.js";
+import { getScripts } from "../storage-client.js";
 
 const listEl = document.getElementById("script-list");
 const emptyEl = document.getElementById("empty");
@@ -30,6 +30,10 @@ function errorMessage(code) {
       return "No active tab found.";
     case "RESTRICTED_PAGE":
       return "Cannot execute on this page (restricted pages like chrome://).";
+    case "CHROME_API_ERROR":
+      return "Chrome could not execute the script. Try reloading the page and extension.";
+    case "INVALID_SCRIPT":
+      return "The saved script is invalid.";
     default:
       return `Execution failed: ${code}`;
   }
@@ -50,7 +54,13 @@ async function runScript(code) {
     return;
   }
 
-  const res = await chrome.runtime.sendMessage({ type: "RUN_SCRIPT", code });
+  let res;
+  try {
+    res = await chrome.runtime.sendMessage({ type: "RUN_SCRIPT", code });
+  } catch {
+    showStatus(errorMessage("CHROME_API_ERROR"), "err");
+    return;
+  }
   if (res?.ok) {
     window.close();
   } else {

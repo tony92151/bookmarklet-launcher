@@ -12,8 +12,8 @@ The project has no build step or external runtime dependencies.
 ## Extension features
 
 - Add, edit, and delete custom scripts
-- Supports `javascript:` bookmarklets and raw JavaScript
-- Automatically removes `javascript:` prefix and tries to decode URI percent-encoding
+- Supports `javascript:` bookmarklets and raw JavaScript through explicit input modes
+- Removes the `javascript:` prefix; URL decoding occurs only when you select the URL-encoded bookmarklet input mode
 - Uses `chrome.storage.local` to store scripts, supporting larger bookmarklet examples
 - Uses `chrome.userScripts.execute` to run in the current tab's `MAIN` world
 - Blocks execution on restricted pages like `chrome://`, `about:`, and extension pages

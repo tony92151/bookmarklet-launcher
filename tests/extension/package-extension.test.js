@@ -39,16 +39,17 @@ test("release packager creates a deterministic archive without stale entries", a
   await runPackager(projectDirectory);
   assert.equal(await archiveHash(archivePath), firstHash);
 
-  await rm(join(projectDirectory, "extension", "background.js"));
-  await runPackager(projectDirectory);
-
   assert.deepEqual(await archiveEntries(archivePath), [
+    "extension/background.js",
     "extension/options/index.html",
     "extension/options/index.js",
     "extension/options/styles.css",
     "extension/popup/index.html",
     "extension/popup/index.js",
     "extension/popup/styles.css",
+    "extension/script-runner.js",
+    "extension/script-submission.js",
+    "extension/storage-client.js",
     "extension/storage.js",
     "icons/icon128.png",
     "icons/icon16.png",
@@ -56,6 +57,12 @@ test("release packager creates a deterministic archive without stale entries", a
     "manifest.json",
     "shared/bookmarklet.js",
   ]);
+
+  await rm(join(projectDirectory, "extension", "background.js"));
+  await assert.rejects(
+    () => runPackager(projectDirectory),
+    /Cannot package extension: required manifest entry is missing/,
+  );
 });
 
 test("release package links options to the published privacy policy", async (t) => {
