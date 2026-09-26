@@ -1,10 +1,10 @@
-import { normalizeScriptInput } from "../../shared/bookmarklet.js";
+import { prepareScriptSubmission } from "../script-submission.js";
 import {
   getScripts,
   saveScript,
   updateScript,
   deleteScript,
-} from "../storage.js";
+} from "../storage-client.js";
 
 const form = document.getElementById("script-form");
 const nameInput = document.getElementById("name");
@@ -111,20 +111,20 @@ async function onDelete(script) {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const name = nameInput.value.trim();
-  const selectedMode = inputMode();
-  let code;
+  const mode = inputMode();
+  let submission;
   try {
-    code = normalizeScriptInput(codeInput.value.trim(), selectedMode).trim();
+    submission = prepareScriptSubmission({
+      name: nameInput.value,
+      code: codeInput.value,
+      mode,
+    });
   } catch (error) {
     setHint(error instanceof Error ? error.message : String(error), "error");
     return;
   }
 
-  if (!code) {
-    setHint("Code cannot be empty.", "error");
-    return;
-  }
+  const { name, code } = submission;
 
   if (editingId) {
     await updateScript(editingId, { name, code });
@@ -133,7 +133,7 @@ form.addEventListener("submit", async (e) => {
   } else {
     await saveScript({ name, code });
     form.reset();
-    setHint(selectedMode === "encoded-bookmarklet" ? "Decoded bookmarklet and saved." : "Saved.");
+    setHint(submission.successMessage);
   }
   await refresh();
 });

@@ -1,0 +1,26 @@
+name: Verify project
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run tests
+        run: node --experimental-default-type=module --test
+      - name: Validate manifest
+        run: python3 -m json.tool manifest.json > /dev/null
+      - name: Package extension
+        run: |
+          node scripts/package-extension.mjs
+          unzip -t dist/bookmarklet-script-manager.zip

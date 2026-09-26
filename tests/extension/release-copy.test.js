@@ -29,7 +29,7 @@ test("options editor provides explicit raw and encoded bookmarklet modes", async
 
   assert.match(options, /name="input-mode" value="raw"[^>]*checked/);
   assert.match(options, /name="input-mode" value="encoded-bookmarklet"/);
-  assert.match(script, /normalizeScriptInput/);
+  assert.match(script, /prepareScriptSubmission/);
   assert.match(script, /inputMode/);
   assert.ok(
     options.indexOf('id="input-mode"') < options.indexOf('id="code"'),
