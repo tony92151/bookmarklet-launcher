@@ -15,16 +15,16 @@ The project has no build step or external runtime dependencies.
 - Supports `javascript:` bookmarklets and raw JavaScript through explicit input modes
 - Removes the `javascript:` prefix; URL decoding occurs only when you select the URL-encoded bookmarklet input mode
 - Uses `chrome.storage.local` to store scripts, supporting larger bookmarklet examples
-- Uses `chrome.userScripts.execute` to run in the current tab's `MAIN` world
+- Uses `chrome.userScripts.execute` when enabled and a page Blob script as a fallback when it is off
 - Blocks execution on restricted pages like `chrome://`, `about:`, and extension pages
-- Shows setup prompt in popup when "Allow user scripts" is not enabled
+- Lets users defer the optional "Allow user scripts" setup and collapse its guidance
 - Offers a "Test This Page" probe while user scripts are disabled; it checks whether a temporary Blob script can run on the current page without running saved scripts
 
 ## Requirements
 
 - Chrome 135+
 - Manifest V3 extension support
-- Must manually enable **Allow user scripts** for this extension
+- Enable **Allow user scripts** if a website blocks the fallback execution method
 - The `zip` command-line utility on `PATH` when creating a release package
 
 ## Load the extension
@@ -34,18 +34,22 @@ The project has no build step or external runtime dependencies.
 3. Click **Load unpacked**.
 4. Select this repository's root folder. `manifest.json` intentionally remains at the root so the extension can import `shared/` modules.
 
-## One-time Setup: Enable User Scripts
+## Optional Setup: Enable User Scripts
 
-This extension uses Chrome's `userScripts` API to execute custom scripts. This API is designed by the browser for user custom scripts and behaves more like bookmarklets, but requires manually enabling the permission.
+When **Allow user scripts** is enabled, the extension uses Chrome's
+`userScripts` API to execute custom scripts. Otherwise it tries a page Blob
+script. Some websites block that fallback with their security policy. The
+popup lets you postpone setup and reopen its instructions later.
 
 1. Find **Bookmarklet Script Manager** in `chrome://extensions`.
 2. Click **Details**.
 3. Enable **Allow user scripts**.
 4. If the popup still says it's not enabled, click **Reload** on the extension card, or restart the browser.
 
-When the toggle is off, **Test This Page** checks whether a simple temporary
-Blob script can run on the current tab. Passing this diagnostic does not enable
-saved scripts or guarantee that every bookmarklet will work.
+When the toggle is off, **Test this page** checks whether a simple temporary
+Blob script can run on the current tab. Testing is optional; saved scripts
+attempt the fallback even if you have not tested the page. A passing test does
+not guarantee that every bookmarklet will work.
 
 ## Usage
 
@@ -148,7 +152,7 @@ The core function of this tool is to execute JavaScript that you paste. Only sav
 - No external source scripts loaded
 - Scripts are not sent to remote services
 - Script data is stored in the browser's local `chrome.storage.local`
-- Scripts will not execute if `userScripts` permission is not enabled
+- Sites that block Blob scripts may require **Allow user scripts** for saved scripts to run
 - Due to browser restrictions, cannot execute on `chrome://`, `about:`, `devtools:` or extension pages
 
 ## License

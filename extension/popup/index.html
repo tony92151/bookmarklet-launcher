@@ -15,19 +15,22 @@
         <h1>Script Manager</h1>
       </div>
     </div>
+    <button id="test-this-page" class="header-test-btn hidden" type="button">Test this page</button>
   </header>
 
   <main class="popup-main">
     <div id="setup-banner" class="banner hidden">
-      <strong>Allow user scripts needs to be enabled</strong>
-      <p>Go to <code>chrome://extensions</code> -> This extension's "Details" -> Enable "Allow user scripts" to run scripts.</p>
-      <p class="banner-hint">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
-      <p class="banner-hint">Custom scripts can read and change this page. Only run scripts you trust.</p>
-      <p class="banner-hint" lang="zh-Hant">自訂指令碼可以讀取及變更此頁面。請僅執行您信任的指令碼。</p>
-      <div class="banner-actions">
-        <button id="open-extensions" class="link-btn">Open Extensions Page</button>
-        <button id="recheck-user-scripts" class="link-btn">I've enabled it — recheck</button>
-        <button id="test-this-page" class="link-btn">Test This Page</button>
+      <button id="expand-setup" class="banner-summary" type="button" aria-expanded="false">User scripts are off — show setup</button>
+      <div class="banner-details">
+        <strong>Allow user scripts is optional</strong>
+        <p>Saved scripts can run without it on some websites. If a website blocks the alternate method, enable "Allow user scripts" in this extension's Details page at <code>chrome://extensions</code>. Choose "I'll enable it later" to test the current page.</p>
+        <p class="banner-hint">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
+        <p class="banner-hint">Custom scripts can read and change this page. Only run scripts you trust.</p>
+        <div class="banner-actions">
+          <button id="open-extensions" class="link-btn">Open Extensions Page</button>
+          <button id="recheck-user-scripts" class="link-btn">I've enabled it — recheck</button>
+          <button id="defer-setup" class="link-btn">I'll enable it later</button>
+        </div>
       </div>
     </div>
 

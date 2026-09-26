@@ -20,4 +20,4 @@
 
 ## 對本專案的直接含意
 
-本專案目前 `manifest.json` 宣告 `userScripts`；若執行路徑呼叫 `chrome.userScripts`，Chrome 138+ 使用者仍須開啟該專用開關。競品免開關的原因是換了一條 API 與頁面 Blob script 路徑；這不代表只要移除權限即可保持相同執行能力和網站相容性。來源：[本專案 manifest.json](../../manifest.json)、[Chrome userScripts API](https://developer.chrome.com/docs/extensions/reference/api/userScripts)、上述競品套件檔案。
+本專案保留 `chrome.userScripts` 作為開關啟用時的執行路徑，並在開關關閉時嘗試頁面 Blob script 備用路徑；測試按鈕只做診斷，不是執行已儲存腳本的前置條件。備用路徑可能被網站 CSP 擋下，且上架審查是否接受這種執行使用者程式碼的方式仍需確認。來源：[本專案 manifest.json](../../manifest.json)、[Chrome userScripts API](https://developer.chrome.com/docs/extensions/reference/api/userScripts)、上述競品套件檔案。

@@ -1,3 +1,5 @@
+import { runBlobScriptInPage } from './page-probe.js';
+
 const RESTRICTED_URL = /^(chrome|edge|about|chrome-extension|devtools):/i;
 
 const errorDetail = (error) => String(error?.message || error);
@@ -15,10 +17,6 @@ export function createScriptRunner(chromeApi) {
   return {
     async run(code) {
       try {
-        if (!(await userScriptsAvailable())) {
-          return { ok: false, error: 'USERSCRIPTS_DISABLED' };
-        }
-
         if (typeof code !== 'string' || !code) {
           return { ok: false, error: 'INVALID_SCRIPT' };
         }
@@ -32,13 +30,25 @@ export function createScriptRunner(chromeApi) {
           return { ok: false, error: 'RESTRICTED_PAGE' };
         }
 
-        await chromeApi.userScripts.execute({
+        if (await userScriptsAvailable()) {
+          await chromeApi.userScripts.execute({
+            target: { tabId: tab.id },
+            world: 'MAIN',
+            injectImmediately: true,
+            js: [{ code }],
+          });
+          return { ok: true };
+        }
+
+        const results = await chromeApi.scripting.executeScript({
           target: { tabId: tab.id },
           world: 'MAIN',
-          injectImmediately: true,
-          js: [{ code }],
+          func: runBlobScriptInPage,
+          args: [code],
         });
-        return { ok: true };
+        const result = results?.[0]?.result;
+        if (result?.ok === true) return { ok: true };
+        return { ok: false, error: result?.error || 'CHROME_API_ERROR' };
       } catch (error) {
         return { ok: false, error: 'CHROME_API_ERROR', detail: errorDetail(error) };
       }

@@ -4,8 +4,27 @@ const listEl = document.getElementById("script-list");
 const emptyEl = document.getElementById("empty");
 const bannerEl = document.getElementById("setup-banner");
 const statusEl = document.getElementById("status");
+const testPageEl = document.getElementById('test-this-page');
 
 let userScriptsOk = false;
+let setupDeferred = false;
+
+function renderSetup() {
+  bannerEl.classList.toggle('hidden', userScriptsOk);
+  bannerEl.classList.toggle('collapsed', !userScriptsOk && setupDeferred);
+  testPageEl.classList.toggle('hidden', userScriptsOk || !setupDeferred);
+  document.getElementById('expand-setup').setAttribute('aria-expanded', String(!setupDeferred));
+}
+
+async function saveSetupDeferred(value) {
+  setupDeferred = value;
+  renderSetup();
+  try {
+    await chrome.storage.local.set({ setupDeferred: value });
+  } catch {
+    showStatus('Could not save this preference. It may reset when you reopen the popup.', 'err');
+  }
+}
 
 function showStatus(text, kind) {
   statusEl.textContent = text;
@@ -14,18 +33,20 @@ function showStatus(text, kind) {
 }
 
 function promptSetup() {
-  bannerEl.classList.remove("hidden");
+  setupDeferred = false;
+  renderSetup();
   bannerEl.classList.remove("flash");
   void bannerEl.offsetWidth;
   bannerEl.classList.add("flash");
   bannerEl.scrollIntoView({ behavior: "smooth", block: "start" });
-  showStatus("Allow user scripts is not enabled. Please set it up first using the instructions below.", "err");
 }
 
 function errorMessage(code) {
   switch (code) {
-    case "USERSCRIPTS_DISABLED":
-      return "Please enable Allow user scripts first.";
+    case "BLOB_BLOCKED":
+      return "This page blocked the alternate script method. Enable Allow user scripts and try again.";
+    case "SCRIPT_FAILED":
+      return "The alternate method could not run this script. Check the script or enable Allow user scripts.";
     case "NO_ACTIVE_TAB":
       return "No active tab found.";
     case "RESTRICTED_PAGE":
@@ -58,17 +79,16 @@ function probeMessage(result) {
 }
 
 async function testThisPage() {
-  const button = document.getElementById('test-this-page');
-  button.disabled = true;
-  button.textContent = 'Testing…';
+  testPageEl.disabled = true;
+  testPageEl.textContent = 'Testing…';
   try {
     const result = await chrome.runtime.sendMessage({ type: 'PROBE_PAGE' });
     showStatus(probeMessage(result), result?.ok ? 'ok' : 'err');
   } catch {
     showStatus(probeMessage(null), 'err');
   } finally {
-    button.disabled = false;
-    button.textContent = 'Test This Page';
+    testPageEl.disabled = false;
+    testPageEl.textContent = 'Test this page';
   }
 }
 
@@ -82,11 +102,6 @@ async function detectUserScripts() {
 }
 
 async function runScript(code) {
-  if (!userScriptsOk) {
-    promptSetup();
-    return;
-  }
-
   let res;
   try {
     res = await chrome.runtime.sendMessage({ type: "RUN_SCRIPT", code });
@@ -97,6 +112,9 @@ async function runScript(code) {
   if (res?.ok) {
     window.close();
   } else {
+    if (!userScriptsOk && (res?.error === 'BLOB_BLOCKED' || res?.error === 'SCRIPT_FAILED')) {
+      promptSetup();
+    }
     showStatus(errorMessage(res?.error), "err");
   }
 }
@@ -131,7 +149,7 @@ function renderScripts(scripts) {
 
 async function checkUserScripts() {
   userScriptsOk = await detectUserScripts();
-  bannerEl.classList.toggle("hidden", userScriptsOk);
+  renderSetup();
 }
 
 function wireNav() {
@@ -145,11 +163,22 @@ function wireNav() {
     chrome.tabs.create({ url: "chrome://extensions" });
   });
   document.getElementById("recheck-user-scripts").addEventListener("click", checkUserScripts);
-  document.getElementById('test-this-page').addEventListener('click', testThisPage);
+  document.getElementById('defer-setup').addEventListener('click', async () => {
+    statusEl.classList.add('hidden');
+    await saveSetupDeferred(true);
+  });
+  document.getElementById('expand-setup').addEventListener('click', () => saveSetupDeferred(false));
+  testPageEl.addEventListener('click', testThisPage);
 }
 
 async function init() {
   wireNav();
+  try {
+    const saved = await chrome.storage.local.get('setupDeferred');
+    setupDeferred = saved.setupDeferred === true;
+  } catch {
+    setupDeferred = false;
+  }
   await checkUserScripts();
   const scripts = await getScripts();
   renderScripts(scripts);

@@ -8,11 +8,14 @@ body {
 }
 button { font: inherit; cursor: pointer; }
 .hidden { display: none !important; }
-.app-header { padding: 16px 22px; background: var(--surface); border-bottom: 1px solid var(--line); }
-.brand { display: flex; align-items: center; gap: 12px; }
+.app-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 22px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .brand img { flex: none; border-radius: 12px; }
 .eyebrow { margin: 0 0 2px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .15em; }
 .brand h1 { margin: 0; font-size: 18px; line-height: 1.2; letter-spacing: -.035em; }
+.header-test-btn { flex: none; max-width: 100px; padding: 7px 9px; border: 1px solid #c9b9fa; border-radius: 8px; background: var(--accent-soft); color: var(--accent-hover); font-size: 11px; font-weight: 750; line-height: 1.2; }
+.header-test-btn:hover { background: #e6dcff; }
+.header-test-btn:disabled { cursor: wait; opacity: .65; }
 .popup-main { padding: 20px 16px 22px; }
 .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 4px 12px; }
 .section-heading h2 { margin: 0; font-size: 13px; font-weight: 750; letter-spacing: -.01em; }
@@ -38,6 +41,10 @@ button { font: inherit; cursor: pointer; }
 .primary-btn { min-height: 38px; margin-top: 18px; padding: 8px 16px; border: 1px solid var(--accent); border-radius: 9px; background: var(--accent); color: #fff; font-weight: 700; transition: background .18s ease; }
 .primary-btn:hover { background: var(--accent-hover); }
 .banner { margin-bottom: 16px; padding: 14px; border: 1px solid #e9cc82; border-radius: 12px; background: #fff9e9; color: #604818; font-size: 12px; line-height: 1.5; }
+.banner.collapsed { padding: 7px 12px; }
+.banner.collapsed .banner-details, .banner:not(.collapsed) .banner-summary { display: none; }
+.banner-summary { width: 100%; padding: 2px 0; border: 0; background: none; color: #604818; font-size: 11px; font-weight: 700; text-align: left; }
+.banner-summary:hover { text-decoration: underline; }
 .banner strong { display: block; margin-bottom: 5px; font-size: 13px; }
 .banner p { margin: 5px 0; }
 .banner code { padding: 1px 4px; border-radius: 4px; background: #f4e7c6; }

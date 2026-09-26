@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPageProbe, runBlobProbeInPage } from '../../extension/page-probe.js';
+import { createPageProbe, runBlobProbeInPage, runBlobScriptInPage } from '../../extension/page-probe.js';
 
 function createChrome({ tab = { id: 17, url: 'https://example.com/' }, result, injectionError } = {}) {
   const calls = [];
@@ -77,6 +77,27 @@ test('page probe reports when the page blocks a Blob script', async () => {
     assert.deepEqual(await runBlobProbeInPage(), { ok: false, error: 'BLOB_BLOCKED' });
     assert.equal(scripts[0].removed, true);
     assert.deepEqual(revoked, ['blob:https://example.com/1']);
+  });
+});
+
+test('fallback executes the selected script on a page that allows Blob scripts', async () => {
+  await withTestPage(false, async ({ scripts, revoked }) => {
+    let ran = false;
+    document.addEventListener('user-script-executed', () => { ran = true; });
+
+    assert.deepEqual(await runBlobScriptInPage('document.dispatchEvent(new Event("user-script-executed"))'), { ok: true });
+    assert.equal(ran, true);
+    assert.equal(scripts[0].removed, true);
+    assert.deepEqual(revoked, ['blob:https://example.com/1']);
+  });
+});
+
+test('fallback reports a page that blocks Blob scripts without running the selected script', async () => {
+  await withTestPage(true, async () => {
+    assert.deepEqual(await runBlobScriptInPage('document.body.textContent = "changed"'), {
+      ok: false,
+      error: 'BLOB_BLOCKED',
+    });
   });
 });
 

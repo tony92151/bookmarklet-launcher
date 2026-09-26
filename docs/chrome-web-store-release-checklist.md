@@ -35,9 +35,15 @@ Manager to the Chrome Web Store.
   popup and options pages open.
 - [ ] Confirm the extension requests only `userScripts`, `scripting`, `storage`,
   and `activeTab` permissions, and does not request host permissions.
-- [ ] With Allow user scripts disabled, confirm Test This Page reports a result
-  on a regular website and does not run any saved script. Confirm the test
-  button is hidden after enabling Allow user scripts.
+- [ ] With Allow user scripts disabled, choose "I'll enable it later" and
+  confirm the setup guidance folds, stays folded after reopening the popup,
+  and Test this page appears beside Script Manager. Reopen the guidance from
+  its compact row.
+- [ ] Confirm Test this page reports a result without running saved scripts.
+  Then run a saved script without first using the test button; confirm the
+  fallback works on a compatible website and reports a failure on a website
+  that blocks Blob scripts. Confirm the test button is hidden after enabling
+  Allow user scripts.
 - [ ] Add a user-provided bookmarklet script, edit it, and close and reopen the
   options page and popup to confirm each saved change persists. Delete the
   script and confirm it remains deleted after reopening the extension.

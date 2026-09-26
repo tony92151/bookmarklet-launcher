@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createScriptRunner } from '../../extension/script-runner.js';
 
-function createChrome({ available = true, tabs = [{ id: 17, url: 'https://example.com' }], queryError, executeError } = {}) {
-  const calls = { query: [], execute: [] };
+function createChrome({ available = true, tabs = [{ id: 17, url: 'https://example.com' }], queryError, executeError, fallbackResult = { ok: true } } = {}) {
+  const calls = { query: [], execute: [], fallback: [] };
   return {
     calls,
     chrome: {
@@ -24,16 +24,35 @@ function createChrome({ available = true, tabs = [{ id: 17, url: 'https://exampl
           return tabs;
         },
       },
+      scripting: {
+        async executeScript(request) {
+          calls.fallback.push(request);
+          return [{ frameId: 0, result: fallbackResult }];
+        },
+      },
     },
   };
 }
 
-test('script runner reports disabled user scripts without querying a tab', async () => {
+test('script runner tries the Blob path without a prior page test when user scripts are disabled', async () => {
   const { chrome, calls } = createChrome({ available: false });
   const runner = createScriptRunner(chrome);
 
-  assert.deepEqual(await runner.run('alert(1)'), { ok: false, error: 'USERSCRIPTS_DISABLED' });
-  assert.deepEqual(calls.query, []);
+  assert.deepEqual(await runner.run('alert(1)'), { ok: true });
+  assert.deepEqual(calls.query, [{ active: true, currentWindow: true }]);
+  assert.equal(calls.fallback.length, 1);
+  assert.equal(calls.fallback[0].world, 'MAIN');
+  assert.deepEqual(calls.fallback[0].args, ['alert(1)']);
+  assert.deepEqual(calls.execute, []);
+});
+
+test('script runner reports a blocked fallback so the user can enable user scripts', async () => {
+  const { chrome } = createChrome({ available: false, fallbackResult: { ok: false, error: 'BLOB_BLOCKED' } });
+
+  assert.deepEqual(await createScriptRunner(chrome).run('alert(1)'), {
+    ok: false,
+    error: 'BLOB_BLOCKED',
+  });
 });
 
 test('script runner rejects restricted pages', async () => {

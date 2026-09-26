@@ -38,6 +38,47 @@ export function runBlobProbeInPage() {
   });
 }
 
+// The saved code runs as a page Blob script, never inside an extension context.
+// Like the probe, this function must not reference variables outside its body.
+export function runBlobScriptInPage(code) {
+  const successEvent = `bookmarklet-script-ran-${Math.random().toString(36).slice(2)}`;
+  const failureEvent = `${successEvent}-error`;
+  const source = `try { (function(){\n${code}\n})(); document.dispatchEvent(new Event(${JSON.stringify(successEvent)})); } catch (error) { document.dispatchEvent(new Event(${JSON.stringify(failureEvent)})); }`;
+  const script = document.createElement('script');
+  const url = URL.createObjectURL(new Blob([source], { type: 'application/javascript' }));
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let timer;
+    const onSuccess = () => finish({ ok: true });
+    const onFailure = () => finish({ ok: false, error: 'SCRIPT_FAILED' });
+
+    function finish(result) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      document.removeEventListener(successEvent, onSuccess);
+      document.removeEventListener(failureEvent, onFailure);
+      script.remove();
+      URL.revokeObjectURL(url);
+      resolve(result);
+    }
+
+    document.addEventListener(successEvent, onSuccess);
+    document.addEventListener(failureEvent, onFailure);
+    script.onerror = () => finish({ ok: false, error: 'BLOB_BLOCKED' });
+    script.onload = () => finish({ ok: false, error: 'SCRIPT_FAILED' });
+    timer = setTimeout(() => finish({ ok: false, error: 'SCRIPT_FAILED' }), 2000);
+
+    try {
+      script.src = url;
+      (document.head || document.documentElement).appendChild(script);
+    } catch {
+      finish({ ok: false, error: 'BLOB_BLOCKED' });
+    }
+  });
+}
+
 export function createPageProbe(chromeApi) {
   return {
     async probe() {
