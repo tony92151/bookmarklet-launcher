@@ -8,12 +8,11 @@ body {
 }
 button { font: inherit; cursor: pointer; }
 .hidden { display: none !important; }
-.app-header { padding: 21px 22px 19px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.app-header { padding: 16px 22px; background: var(--surface); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand img { flex: none; border-radius: 12px; }
 .eyebrow { margin: 0 0 2px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .15em; }
 .brand h1 { margin: 0; font-size: 18px; line-height: 1.2; letter-spacing: -.035em; }
-.header-copy { margin: 15px 0 0; color: var(--muted); font-size: 12px; }
 .popup-main { padding: 20px 16px 22px; }
 .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 4px 12px; }
 .section-heading h2 { margin: 0; font-size: 13px; font-weight: 750; letter-spacing: -.01em; }
