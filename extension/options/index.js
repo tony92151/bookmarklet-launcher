@@ -27,8 +27,9 @@ function resetInputMode() {
   document.querySelector('input[name="input-mode"][value="raw"]').checked = true;
 }
 
-function setHint(text) {
+function setHint(text, kind = "success") {
   formHint.textContent = text;
+  formHint.classList.toggle("error", kind === "error");
   if (text) {
     setTimeout(() => {
       formHint.textContent = "";
@@ -44,7 +45,8 @@ function enterEditMode(script) {
   nameInput.value = script.name;
   codeInput.value = script.code;
   resetInputMode();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  formTitle.scrollIntoView({ behavior: "smooth", block: "start" });
+  nameInput.focus({ preventScroll: true });
 }
 
 function exitEditMode() {
@@ -110,16 +112,17 @@ async function onDelete(script) {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = nameInput.value.trim();
+  const selectedMode = inputMode();
   let code;
   try {
-    code = normalizeScriptInput(codeInput.value.trim(), inputMode()).trim();
+    code = normalizeScriptInput(codeInput.value.trim(), selectedMode).trim();
   } catch (error) {
-    setHint(error instanceof Error ? error.message : String(error));
+    setHint(error instanceof Error ? error.message : String(error), "error");
     return;
   }
 
   if (!code) {
-    setHint("Code cannot be empty.");
+    setHint("Code cannot be empty.", "error");
     return;
   }
 
@@ -130,7 +133,7 @@ form.addEventListener("submit", async (e) => {
   } else {
     await saveScript({ name, code });
     form.reset();
-    setHint(inputMode() === "encoded-bookmarklet" ? "Decoded bookmarklet and saved." : "Saved.");
+    setHint(selectedMode === "encoded-bookmarklet" ? "Decoded bookmarklet and saved." : "Saved.");
   }
   await refresh();
 });

@@ -3,34 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bookmarklet Script Manager</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Bookmarklet Script Manager</h1>
+  <header class="app-header">
+    <div class="brand">
+      <img src="../../icons/icon48.png" width="44" height="44" alt="" />
+      <div>
+        <p class="eyebrow">BOOKMARKLET</p>
+        <h1>Script Manager</h1>
+      </div>
+    </div>
+    <p class="header-copy">Your scripts, one click away.</p>
   </header>
 
-  <div id="setup-banner" class="banner hidden">
-    <strong>Allow user scripts needs to be enabled</strong>
-    <p>Go to <code>chrome://extensions</code> -> This extension's "Details" -> Enable "Allow user scripts" to run scripts.</p>
-    <p class="banner-hint">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
-    <p class="banner-hint">Custom scripts can read and change this page. Only run scripts you trust.</p>
-    <p class="banner-hint" lang="zh-Hant">自訂指令碼可以讀取及變更此頁面。請僅執行您信任的指令碼。</p>
-    <button id="open-extensions" class="link-btn">Open Extensions Page</button>
-    <button id="recheck-user-scripts" class="link-btn">I've enabled it — recheck</button>
-  </div>
+  <main class="popup-main">
+    <div id="setup-banner" class="banner hidden">
+      <strong>Allow user scripts needs to be enabled</strong>
+      <p>Go to <code>chrome://extensions</code> -> This extension's "Details" -> Enable "Allow user scripts" to run scripts.</p>
+      <p class="banner-hint">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
+      <p class="banner-hint">Custom scripts can read and change this page. Only run scripts you trust.</p>
+      <p class="banner-hint" lang="zh-Hant">自訂指令碼可以讀取及變更此頁面。請僅執行您信任的指令碼。</p>
+      <div class="banner-actions">
+        <button id="open-extensions" class="link-btn">Open Extensions Page</button>
+        <button id="recheck-user-scripts" class="link-btn">I've enabled it — recheck</button>
+      </div>
+    </div>
 
-  <div id="status" class="status hidden"></div>
+    <div id="status" class="status hidden" role="status" aria-live="polite"></div>
 
-  <ul id="script-list"></ul>
+    <section class="script-section" aria-labelledby="scripts-title">
+      <div class="section-heading">
+        <h2 id="scripts-title">Saved scripts</h2>
+        <span class="section-hint">RUN ON THIS TAB</span>
+      </div>
+      <ul id="script-list"></ul>
 
-  <div id="empty" class="empty hidden">
-    <p>No scripts yet</p>
-    <button id="add-first" class="primary-btn">Add First Script</button>
-  </div>
+      <div id="empty" class="empty hidden">
+        <div class="empty-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.75h12a1 1 0 0 1 1 1v15.5l-7-4.5-7 4.5V4.75a1 1 0 0 1 1-1Z"/><path d="m9 10 2 2-2 2m4 0h2"/></svg>
+        </div>
+        <p>Your collection starts here</p>
+        <span>Add a script to launch it on the current tab.</span>
+        <button id="add-first" class="primary-btn">Add First Script</button>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    <button id="manage" class="link-btn">Manage Scripts</button>
+    <button id="manage" class="manage-btn">
+      <span>Manage Scripts</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
   </footer>
 
   <script type="module" src="index.js"></script>

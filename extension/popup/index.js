@@ -70,7 +70,15 @@ function renderScripts(scripts) {
     const li = document.createElement("li");
     const btn = document.createElement("button");
     btn.className = "script-btn";
-    btn.textContent = script.name;
+    const name = document.createElement("span");
+    name.textContent = script.name;
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("width", "18");
+    icon.setAttribute("height", "18");
+    icon.setAttribute("aria-hidden", "true");
+    icon.innerHTML = '<path d="m9 6 7 6-7 6V6Z" fill="currentColor"/>';
+    btn.append(name, icon);
     btn.title = "Click to execute in current tab";
     btn.addEventListener("click", () => runScript(script.code));
     li.appendChild(btn);
