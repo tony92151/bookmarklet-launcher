@@ -9,6 +9,10 @@ body {
 button { font: inherit; cursor: pointer; }
 .hidden { display: none !important; }
 .app-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 22px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.header-actions { display: flex; flex: none; flex-direction: column; align-items: flex-end; gap: 5px; }
+.language-switch { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.language-switch button { min-height: 26px; padding: 3px 7px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 10px; font-weight: 750; }
+.language-switch button:hover, .language-switch button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-hover); }
 .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .brand img { flex: none; border-radius: 12px; }
 .eyebrow { margin: 0 0 2px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .15em; }
