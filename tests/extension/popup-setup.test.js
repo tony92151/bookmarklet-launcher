@@ -42,11 +42,25 @@ async function withPopup(preferences, callback) {
   }
   elements.get('setup-banner').classList.add('hidden');
   elements.get('test-this-page').classList.add('hidden');
+  const languageButtons = ['en', 'zh-TW'].map((language) => {
+    const button = makeElement();
+    button.dataset = { language };
+    return button;
+  });
+  const savedScriptsLabel = makeElement();
+  savedScriptsLabel.dataset = { i18n: 'savedScripts' };
+  elements.set('saved-scripts-label', savedScriptsLabel);
+  elements.set('language-buttons', languageButtons);
   const originalDocument = globalThis.document;
   const originalChrome = globalThis.chrome;
   const originalWindow = globalThis.window;
   globalThis.document = {
+    documentElement: { lang: 'en' },
     getElementById: (id) => elements.get(id),
+    querySelectorAll: (selector) => ({
+      '[data-language]': languageButtons,
+      '[data-i18n]': [savedScriptsLabel],
+    }[selector] || []),
     createElement: () => makeElement(),
     createElementNS: () => makeElement(),
   };
@@ -56,6 +70,7 @@ async function withPopup(preferences, callback) {
       local: {
         async get(key) {
           if (key === 'scripts') return { scripts: preferences.scripts || [] };
+          if (key === 'language') return { language: preferences.language };
           return { setupDeferred: preferences.setupDeferred };
         },
         async set(value) { Object.assign(preferences, value); },
@@ -131,5 +146,15 @@ test('saved scripts try to run without a prior page test when user scripts are o
 
     assert.ok(preferences.messages.some((message) => message.type === 'RUN_SCRIPT' && message.code === 'alert(1)'));
     assert.equal(preferences.closed, true);
+  });
+});
+
+test('popup language switch changes its copy and saves the selection', async () => {
+  const preferences = { setupDeferred: false, available: true, language: 'en' };
+  await withPopup(preferences, async (elements) => {
+    assert.equal(elements.get('saved-scripts-label').textContent, 'Saved scripts');
+    await elements.get('language-buttons')[1].click();
+    assert.equal(elements.get('saved-scripts-label').textContent, '已儲存的指令碼');
+    assert.equal(preferences.language, 'zh-TW');
   });
 });

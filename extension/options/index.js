@@ -1,4 +1,5 @@
 import { prepareScriptSubmission } from "../script-submission.js";
+import { createLanguageController } from "../language.js";
 import {
   getScripts,
   saveScript,
@@ -7,7 +8,6 @@ import {
 } from "../storage-client.js";
 
 const versionEl = document.getElementById("extension-version");
-versionEl.textContent = `Version ${chrome.runtime.getManifest().version}`;
 
 const form = document.getElementById("script-form");
 const nameInput = document.getElementById("name");
@@ -21,6 +21,20 @@ const listEmpty = document.getElementById("list-empty");
 const countEl = document.getElementById("count");
 
 let editingId = null;
+let lastScripts = [];
+let currentHint = null;
+const i18n = createLanguageController({
+  document,
+  navigator: globalThis.navigator,
+  storage: chrome.storage.local,
+  onChange() {
+    versionEl.textContent = `${i18n.t('version')} ${chrome.runtime.getManifest().version}`;
+    formTitle.textContent = i18n.t(editingId ? 'editScript' : 'addScript');
+    saveBtn.textContent = i18n.t(editingId ? 'update' : 'save');
+    if (currentHint) formHint.textContent = i18n.t(currentHint);
+    renderList(lastScripts);
+  },
+});
 
 function inputMode() {
   return document.querySelector('input[name="input-mode"]:checked').value;
@@ -30,20 +44,22 @@ function resetInputMode() {
   document.querySelector('input[name="input-mode"][value="raw"]').checked = true;
 }
 
-function setHint(text, kind = "success") {
-  formHint.textContent = text;
+function setHint(key, kind = "success") {
+  currentHint = key;
+  formHint.textContent = i18n.t(key);
   formHint.classList.toggle("error", kind === "error");
-  if (text) {
+  if (key) {
     setTimeout(() => {
       formHint.textContent = "";
+      currentHint = null;
     }, 2500);
   }
 }
 
 function enterEditMode(script) {
   editingId = script.id;
-  formTitle.textContent = "Edit Script";
-  saveBtn.textContent = "Update";
+  formTitle.textContent = i18n.t('editScript');
+  saveBtn.textContent = i18n.t('update');
   cancelBtn.classList.remove("hidden");
   nameInput.value = script.name;
   codeInput.value = script.code;
@@ -54,14 +70,15 @@ function enterEditMode(script) {
 
 function exitEditMode() {
   editingId = null;
-  formTitle.textContent = "Add Script";
-  saveBtn.textContent = "Save";
+  formTitle.textContent = i18n.t('addScript');
+  saveBtn.textContent = i18n.t('save');
   cancelBtn.classList.add("hidden");
   form.reset();
   resetInputMode();
 }
 
 function renderList(scripts) {
+  lastScripts = scripts;
   countEl.textContent = String(scripts.length);
   listEl.innerHTML = "";
   listEmpty.classList.toggle("hidden", scripts.length > 0);
@@ -85,11 +102,11 @@ function renderList(scripts) {
     actions.className = "item-actions";
     const editBtn = document.createElement("button");
     editBtn.className = "sm-btn edit";
-    editBtn.textContent = "Edit";
+    editBtn.textContent = i18n.t('edit');
     editBtn.addEventListener("click", () => enterEditMode(script));
     const delBtn = document.createElement("button");
     delBtn.className = "sm-btn delete";
-    delBtn.textContent = "Delete";
+    delBtn.textContent = i18n.t('delete');
     delBtn.addEventListener("click", () => onDelete(script));
     actions.appendChild(editBtn);
     actions.appendChild(delBtn);
@@ -106,7 +123,7 @@ async function refresh() {
 }
 
 async function onDelete(script) {
-  if (!confirm(`Delete "${script.name}"?`)) return;
+  if (!confirm(i18n.t('deleteConfirm', { name: script.name }))) return;
   await deleteScript(script.id);
   if (editingId === script.id) exitEditMode();
   await refresh();
@@ -123,7 +140,10 @@ form.addEventListener("submit", async (e) => {
       mode,
     });
   } catch (error) {
-    setHint(error instanceof Error ? error.message : String(error), "error");
+    const message = error instanceof Error ? error.message : String(error);
+    setHint(message === 'Code cannot be empty.' ? 'emptyCode'
+      : message === 'Unable to decode bookmarklet: malformed percent encoding.' ? 'malformedEncoding'
+        : message, 'error');
     return;
   }
 
@@ -132,15 +152,19 @@ form.addEventListener("submit", async (e) => {
   if (editingId) {
     await updateScript(editingId, { name, code });
     exitEditMode();
-    setHint("Updated.");
+    setHint('updated');
   } else {
     await saveScript({ name, code });
     form.reset();
-    setHint(submission.successMessage);
+    setHint(mode === 'encoded-bookmarklet' ? 'decodedSaved' : 'saved');
   }
   await refresh();
 });
 
 cancelBtn.addEventListener("click", exitEditMode);
 
-refresh();
+document.querySelectorAll('[data-language]').forEach((button) => {
+  button.addEventListener('click', () => i18n.setLanguage(button.dataset.language));
+});
+
+void i18n.initialize().then(refresh);
