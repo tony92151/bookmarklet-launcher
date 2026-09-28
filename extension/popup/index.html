@@ -12,24 +12,30 @@
       <img src="../../icons/icon48.png" width="44" height="44" alt="" />
       <div>
         <p class="eyebrow">BOOKMARKLET</p>
-        <h1>Script Manager</h1>
+        <h1 data-i18n="brandName">Script Manager</h1>
       </div>
     </div>
-    <button id="test-this-page" class="header-test-btn hidden" type="button">Test this page</button>
+    <div class="header-actions">
+      <div class="language-switch" role="group" aria-label="Language" data-i18n-aria-label="language">
+        <button type="button" data-language="en" aria-pressed="true">EN</button>
+        <button type="button" data-language="zh-TW" aria-pressed="false">繁中</button>
+      </div>
+      <button id="test-this-page" class="header-test-btn hidden" type="button" data-i18n="testPage">Test this page</button>
+    </div>
   </header>
 
   <main class="popup-main">
     <div id="setup-banner" class="banner hidden">
-      <button id="expand-setup" class="banner-summary" type="button" aria-expanded="false">User scripts are off — show setup</button>
+      <button id="expand-setup" class="banner-summary" type="button" aria-expanded="false" data-i18n="setupSummary">User scripts are off — show setup</button>
       <div class="banner-details">
-        <strong>Allow user scripts is optional</strong>
-        <p>Saved scripts can run without it on some websites. If a website blocks the alternate method, enable "Allow user scripts" in this extension's Details page at <code>chrome://extensions</code>. Choose "I'll enable it later" to test the current page.</p>
-        <p class="banner-hint">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
-        <p class="banner-hint">Custom scripts can read and change this page. Only run scripts you trust.</p>
+        <strong data-i18n="setupTitle">Allow user scripts is optional</strong>
+        <p data-i18n="setupDescription">Saved scripts can run without it on some websites. If a website blocks the alternate method, enable "Allow user scripts" in this extension's Details page at chrome://extensions. Choose "I'll enable it later" to test the current page.</p>
+        <p class="banner-hint" data-i18n="setupReload">Already enabled but still seeing this? Click "Reload" on the extension card, or restart the browser.</p>
+        <p class="banner-hint" data-i18n="setupSafety">Custom scripts can read and change this page. Only run scripts you trust.</p>
         <div class="banner-actions">
-          <button id="open-extensions" class="link-btn">Open Extensions Page</button>
-          <button id="recheck-user-scripts" class="link-btn">I've enabled it — recheck</button>
-          <button id="defer-setup" class="link-btn">I'll enable it later</button>
+          <button id="open-extensions" class="link-btn" data-i18n="openExtensions">Open Extensions Page</button>
+          <button id="recheck-user-scripts" class="link-btn" data-i18n="recheck">I've enabled it — recheck</button>
+          <button id="defer-setup" class="link-btn" data-i18n="defer">I'll enable it later</button>
         </div>
       </div>
     </div>
@@ -38,8 +44,8 @@
 
     <section class="script-section" aria-labelledby="scripts-title">
       <div class="section-heading">
-        <h2 id="scripts-title">Saved scripts</h2>
-        <span class="section-hint">RUN ON THIS TAB</span>
+        <h2 id="scripts-title" data-i18n="savedScripts">Saved scripts</h2>
+        <span class="section-hint" data-i18n="runOnTab">RUN ON THIS TAB</span>
       </div>
       <ul id="script-list"></ul>
 
@@ -47,16 +53,16 @@
         <div class="empty-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.75h12a1 1 0 0 1 1 1v15.5l-7-4.5-7 4.5V4.75a1 1 0 0 1 1-1Z"/><path d="m9 10 2 2-2 2m4 0h2"/></svg>
         </div>
-        <p>Your collection starts here</p>
-        <span>Add a script to launch it on the current tab.</span>
-        <button id="add-first" class="primary-btn">Add First Script</button>
+        <p data-i18n="collectionStarts">Your collection starts here</p>
+        <span data-i18n="addToLaunch">Add a script to launch it on the current tab.</span>
+        <button id="add-first" class="primary-btn" data-i18n="addFirst">Add First Script</button>
       </div>
     </section>
   </main>
 
   <footer>
     <button id="manage" class="manage-btn">
-      <span>Manage Scripts</span>
+      <span data-i18n="manage">Manage Scripts</span>
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
   </footer>

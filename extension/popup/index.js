@@ -1,4 +1,5 @@
 import { getScripts } from "../storage-client.js";
+import { createLanguageController } from "../language.js";
 
 const listEl = document.getElementById("script-list");
 const emptyEl = document.getElementById("empty");
@@ -8,6 +9,18 @@ const testPageEl = document.getElementById('test-this-page');
 
 let userScriptsOk = false;
 let setupDeferred = false;
+let currentStatus = null;
+let testing = false;
+const i18n = createLanguageController({
+  document,
+  navigator: globalThis.navigator,
+  storage: chrome.storage.local,
+  onChange() {
+    if (currentStatus?.key) statusEl.textContent = i18n.t(currentStatus.key, currentStatus.values);
+    testPageEl.textContent = i18n.t(testing ? 'testing' : 'testPage');
+    document.querySelectorAll('.script-btn').forEach((button) => { button.title = i18n.t('runScriptTitle'); });
+  },
+});
 
 function renderSetup() {
   bannerEl.classList.toggle('hidden', userScriptsOk);
@@ -22,12 +35,13 @@ async function saveSetupDeferred(value) {
   try {
     await chrome.storage.local.set({ setupDeferred: value });
   } catch {
-    showStatus('Could not save this preference. It may reset when you reopen the popup.', 'err');
+    showStatus('preferenceError', 'err');
   }
 }
 
-function showStatus(text, kind) {
-  statusEl.textContent = text;
+function showStatus(key, kind, values) {
+  currentStatus = { key, values };
+  statusEl.textContent = i18n.t(key, values);
   statusEl.className = `status ${kind}`;
   statusEl.classList.remove("hidden");
 }
@@ -44,43 +58,44 @@ function promptSetup() {
 function errorMessage(code) {
   switch (code) {
     case "BLOB_BLOCKED":
-      return "This page blocked the alternate script method. Enable Allow user scripts and try again.";
+      return 'blobBlocked';
     case "SCRIPT_FAILED":
-      return "The alternate method could not run this script. Check the script or enable Allow user scripts.";
+      return 'scriptFailed';
     case "NO_ACTIVE_TAB":
-      return "No active tab found.";
+      return 'noActiveTab';
     case "RESTRICTED_PAGE":
-      return "Cannot execute on this page (restricted pages like chrome://).";
+      return 'restrictedPage';
     case "CHROME_API_ERROR":
-      return "Chrome could not execute the script. Try reloading the page and extension.";
+      return 'chromeApiError';
     case "INVALID_SCRIPT":
-      return "The saved script is invalid.";
+      return 'invalidScript';
     default:
-      return `Execution failed: ${code}`;
+      return 'executionFailed';
   }
 }
 
 function probeMessage(result) {
   if (result?.ok) {
-    return 'Basic test passed on this page. Some bookmarklets may still fail.';
+    return 'probePassed';
   }
   switch (result?.error) {
     case 'BLOB_BLOCKED':
-      return 'This page blocked the test script. Its security settings may prevent this method.';
+      return 'probeBlobBlocked';
     case 'PROBE_NO_SIGNAL':
-      return 'The test script did not run on this page.';
+      return 'probeNoSignal';
     case 'RESTRICTED_PAGE':
-      return 'This browser page does not allow extensions to run scripts.';
+      return 'probeRestricted';
     case 'NO_ACTIVE_TAB':
-      return 'No active tab found to test.';
+      return 'probeNoTab';
     default:
-      return 'Could not test this page. Try a regular website.';
+      return 'probeFailed';
   }
 }
 
 async function testThisPage() {
   testPageEl.disabled = true;
-  testPageEl.textContent = 'Testing…';
+  testing = true;
+  testPageEl.textContent = i18n.t('testing');
   try {
     const result = await chrome.runtime.sendMessage({ type: 'PROBE_PAGE' });
     showStatus(probeMessage(result), result?.ok ? 'ok' : 'err');
@@ -88,7 +103,8 @@ async function testThisPage() {
     showStatus(probeMessage(null), 'err');
   } finally {
     testPageEl.disabled = false;
-    testPageEl.textContent = 'Test this page';
+    testing = false;
+    testPageEl.textContent = i18n.t('testPage');
   }
 }
 
@@ -115,7 +131,7 @@ async function runScript(code) {
     if (!userScriptsOk && (res?.error === 'BLOB_BLOCKED' || res?.error === 'SCRIPT_FAILED')) {
       promptSetup();
     }
-    showStatus(errorMessage(res?.error), "err");
+    showStatus(errorMessage(res?.error), "err", { code: res?.error });
   }
 }
 
@@ -140,7 +156,7 @@ function renderScripts(scripts) {
     icon.setAttribute("aria-hidden", "true");
     icon.innerHTML = '<path d="m9 6 7 6-7 6V6Z" fill="currentColor"/>';
     btn.append(name, icon);
-    btn.title = "Click to execute in current tab";
+    btn.title = i18n.t('runScriptTitle');
     btn.addEventListener("click", () => runScript(script.code));
     li.appendChild(btn);
     listEl.appendChild(li);
@@ -169,10 +185,14 @@ function wireNav() {
   });
   document.getElementById('expand-setup').addEventListener('click', () => saveSetupDeferred(false));
   testPageEl.addEventListener('click', testThisPage);
+  document.querySelectorAll('[data-language]').forEach((button) => {
+    button.addEventListener('click', () => i18n.setLanguage(button.dataset.language));
+  });
 }
 
 async function init() {
   wireNav();
+  await i18n.initialize();
   try {
     const saved = await chrome.storage.local.get('setupDeferred');
     setupDeferred = saved.setupDeferred === true;

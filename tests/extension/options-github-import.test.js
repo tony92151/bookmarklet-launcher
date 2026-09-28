@@ -31,8 +31,10 @@ async function withOptions(fetcher, callback, scripts = []) {
 
   const messages = [];
   globalThis.document = {
+    documentElement: { lang: 'en' },
     getElementById: (id) => elements.get(id),
     querySelector: () => ({ value: 'raw', checked: true }),
+    querySelectorAll: () => [],
     createElement: () => makeElement(),
   };
   globalThis.chrome = {
@@ -40,7 +42,7 @@ async function withOptions(fetcher, callback, scripts = []) {
       getManifest: () => ({ version: '1.1.0' }),
       async sendMessage(message) { messages.push(message); return { ok: true }; },
     },
-    storage: { local: { async get() { return { scripts }; } } },
+    storage: { local: { async get(key) { return key === 'language' ? { language: 'en' } : { scripts }; }, async set() {} } },
   };
   globalThis.fetch = fetcher;
 
