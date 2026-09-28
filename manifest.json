@@ -5,6 +5,7 @@
   "description": "Add and execute your own bookmarklets from the popup (javascript: bookmarklet or raw JS), same effect as bookmarks.",
   "minimum_chrome_version": "135",
   "permissions": ["userScripts", "scripting", "storage", "activeTab"],
+  "host_permissions": ["https://raw.githubusercontent.com/*"],
   "background": {
     "service_worker": "extension/background.js",
     "type": "module"

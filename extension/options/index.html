@@ -30,6 +30,11 @@
         <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
         <div><p class="eyebrow">EDITOR</p><h2 id="form-title">Add Script</h2></div>
       </div>
+      <div class="source-tabs" role="tablist" aria-label="Add script method">
+        <button type="button" id="manual-tab" role="tab" aria-controls="manual-panel" aria-selected="true">Manual</button>
+        <button type="button" id="github-tab" role="tab" aria-controls="github-panel" aria-selected="false" tabindex="-1">GitHub</button>
+      </div>
+      <div id="manual-panel" role="tabpanel" aria-labelledby="manual-tab">
       <form id="script-form">
         <label>
           <span>Script name</span>
@@ -53,6 +58,18 @@
           <span id="form-hint" class="hint" role="status" aria-live="polite"></span>
         </div>
       </form>
+      </div>
+      <div id="github-panel" class="hidden" role="tabpanel" aria-labelledby="github-tab">
+        <form id="github-form">
+          <label for="github-url">GitHub JavaScript file URL</label>
+          <input type="url" id="github-url" placeholder="https://github.com/owner/repo/blob/main/script.js" required />
+          <p class="field-hint">Save a one-time local copy of a public .js file.</p>
+          <div class="form-actions">
+            <button type="submit" class="primary-btn" id="github-save-btn">Save</button>
+            <span id="github-hint" class="hint" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
     </section>
 
     <section class="card library-card" aria-labelledby="library-title">

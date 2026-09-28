@@ -10,11 +10,14 @@ function normalizeScript(value) {
   if (!value || typeof value !== 'object') return null;
   if (typeof value.id !== 'string' || !value.id || typeof value.code !== 'string') return null;
 
+  const createdAt = Number.isFinite(value.createdAt) ? value.createdAt : Date.now();
+
   return {
     id: value.id,
     name: typeof value.name === 'string' && value.name.trim() ? value.name.trim() : 'Unnamed Script',
     code: value.code,
-    createdAt: Number.isFinite(value.createdAt) ? value.createdAt : Date.now(),
+    createdAt,
+    updatedAt: Number.isFinite(value.updatedAt) ? value.updatedAt : createdAt,
   };
 }
 
@@ -39,11 +42,13 @@ export function saveScript({ name, code }) {
   const entryName = String(name || '').trim() || 'Unnamed Script';
   const entryCode = String(code || '');
   return mutateScripts((scripts) => {
+    const now = Date.now();
     const script = {
       id: crypto.randomUUID(),
       name: entryName,
       code: entryCode,
-      createdAt: Date.now(),
+      createdAt: now,
+      updatedAt: now,
     };
     return { shouldWrite: true, scripts: [...scripts, script], value: script };
   });
@@ -58,6 +63,7 @@ export function updateScript(id, { name, code }) {
       ...scripts[index],
       name: String(name || '').trim() || 'Unnamed Script',
       code: String(code || ''),
+      updatedAt: Date.now(),
     };
     const next = [...scripts];
     next[index] = script;

@@ -1,4 +1,5 @@
 import { prepareScriptSubmission } from "../script-submission.js";
+import { loadGithubScript } from "../github-import.js";
 import {
   getScripts,
   saveScript,
@@ -19,6 +20,14 @@ const cancelBtn = document.getElementById("cancel-btn");
 const listEl = document.getElementById("list");
 const listEmpty = document.getElementById("list-empty");
 const countEl = document.getElementById("count");
+const manualTab = document.getElementById("manual-tab");
+const githubTab = document.getElementById("github-tab");
+const manualPanel = document.getElementById("manual-panel");
+const githubPanel = document.getElementById("github-panel");
+const githubForm = document.getElementById("github-form");
+const githubUrlInput = document.getElementById("github-url");
+const githubSaveBtn = document.getElementById("github-save-btn");
+const githubHint = document.getElementById("github-hint");
 
 let editingId = null;
 
@@ -28,6 +37,24 @@ function inputMode() {
 
 function resetInputMode() {
   document.querySelector('input[name="input-mode"][value="raw"]').checked = true;
+}
+
+function formatUpdatedAt(script) {
+  const timestamp = Number.isFinite(script.updatedAt) ? script.updatedAt : script.createdAt;
+  const date = new Date(timestamp);
+  if (!Number.isFinite(timestamp) || Number.isNaN(date.getTime())) return "Updated time unavailable";
+  const pad = (value) => String(value).padStart(2, "0");
+  return `Updated ${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+function setActiveTab(source) {
+  const manual = source === "manual";
+  manualPanel.classList.toggle("hidden", !manual);
+  githubPanel.classList.toggle("hidden", manual);
+  manualTab.setAttribute("aria-selected", String(manual));
+  githubTab.setAttribute("aria-selected", String(!manual));
+  manualTab.setAttribute("tabindex", manual ? "0" : "-1");
+  githubTab.setAttribute("tabindex", manual ? "-1" : "0");
 }
 
 function setHint(text, kind = "success") {
@@ -41,6 +68,8 @@ function setHint(text, kind = "success") {
 }
 
 function enterEditMode(script) {
+  setActiveTab("manual");
+  githubTab.classList.add("hidden");
   editingId = script.id;
   formTitle.textContent = "Edit Script";
   saveBtn.textContent = "Update";
@@ -54,6 +83,7 @@ function enterEditMode(script) {
 
 function exitEditMode() {
   editingId = null;
+  githubTab.classList.remove("hidden");
   formTitle.textContent = "Add Script";
   saveBtn.textContent = "Save";
   cancelBtn.classList.add("hidden");
@@ -77,7 +107,7 @@ function renderList(scripts) {
     name.textContent = script.name;
     const meta = document.createElement("div");
     meta.className = "item-meta";
-    meta.textContent = script.code.slice(0, 80).replace(/\s+/g, " ");
+    meta.textContent = formatUpdatedAt(script);
     info.appendChild(name);
     info.appendChild(meta);
 
@@ -142,5 +172,37 @@ form.addEventListener("submit", async (e) => {
 });
 
 cancelBtn.addEventListener("click", exitEditMode);
+
+manualTab.addEventListener("click", () => setActiveTab("manual"));
+githubTab.addEventListener("click", () => setActiveTab("github"));
+for (const tab of [manualTab, githubTab]) {
+  tab.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const next = tab === manualTab ? githubTab : manualTab;
+    if (next.classList.contains("hidden")) return;
+    setActiveTab(next === manualTab ? "manual" : "github");
+    next.focus();
+  });
+}
+
+githubForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  githubSaveBtn.disabled = true;
+  githubHint.textContent = "Loading GitHub file…";
+  githubHint.classList.remove("error");
+  try {
+    const script = await loadGithubScript(githubUrlInput.value);
+    await saveScript(script);
+    githubForm.reset();
+    githubHint.textContent = "Saved a local copy.";
+    await refresh();
+  } catch (error) {
+    githubHint.textContent = error instanceof Error ? error.message : String(error);
+    githubHint.classList.add("error");
+  } finally {
+    githubSaveBtn.disabled = false;
+  }
+});
 
 refresh();
