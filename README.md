@@ -1,11 +1,7 @@
 # Bookmarklet Script Manager
 
 Bookmarklet Script Manager is a Chrome extension for saving and running trusted
-bookmarklets. This repository also includes a companion bookmarklet site; both
-tools share one bookmarklet-conversion module:
-
-- **Bookmarklet Script Manager** — a Manifest V3 Chrome extension for saving and running trusted bookmarklets.
-- **Bookmarklet site** — a static catalog and URL converter for installing bookmarklets without an extension.
+bookmarklets. The companion bookmarklet site now lives in [bookmarklet-script-manager-market](https://github.com/tony92151/bookmarklet-script-manager-market). This repository contains the Manifest V3 Chrome extension.
 
 The project has no build step or external runtime dependencies.
 
@@ -73,15 +69,11 @@ javascript:(()=>alert(document.title))();
 
 The files in `fixtures/` are larger bookmarklet test data, useful for verifying the storage and decoding flow.
 
-## Bookmarklet site
+## Public site and privacy policy
 
-The static catalog lives at `site/index.html`; the URL converter is at `site/converter/index.html`. In a GitHub Pages deployment their URLs are `/site/` and `/site/converter/`.
+The bookmarklet catalog, URL converter, privacy policy, and GitHub Pages deployment are maintained in [bookmarklet-script-manager-market](https://github.com/tony92151/bookmarklet-script-manager-market). The public site is at [Bookmarklet Launcher](https://tony92151.github.io/bookmarklet-script-manager-market/), and the privacy policy is at [privacy.html](https://tony92151.github.io/bookmarklet-script-manager-market/privacy.html).
 
-The catalog is `bookmarklets/catalog.json`, and each local bookmarklet source lives beside it in `bookmarklets/`. The site validates catalog source paths and creates encoded bookmarklet URLs with `shared/bookmarklet.js`.
-
-## GitHub Pages
-
-The included Pages workflow copies `site/`, `shared/`, and `bookmarklets/` into a single deployment artifact. Configure the repository's Pages source as **GitHub Actions**; do not select a branch directory as the Pages source. After a push to `main`, open the deployed `/site/` path.
+The extension keeps its own copy of `shared/bookmarklet.js` for script input conversion and release packaging.
 
 ## Development
 
@@ -117,7 +109,7 @@ node scripts/package-extension.mjs
 
 Before submitting a Chrome Web Store test release, follow the
 [release checklist](docs/chrome-web-store-release-checklist.md). The published
-[privacy policy](site/privacy.html) explains the extension's local-only data
+[privacy policy](https://tony92151.github.io/bookmarklet-script-manager-market/privacy.html) explains the extension's local-only data
 storage and use.
 
 Run the test suite with Node's ESM default enabled:
@@ -137,11 +129,9 @@ python3 -m json.tool manifest.json
 ```text
 manifest.json      MV3 manifest and extension entry points
 extension/         background, popup, options, and storage modules
-site/              static bookmarklet catalog and converter pages
 shared/            bookmarklet URL conversion module
-bookmarklets/      catalog metadata and bookmarklet source files
 fixtures/          bookmarklet test data
-tests/             Node tests for shared, site, and extension contracts
+tests/             Node tests for shared and extension contracts
 icons/             extension icons
 ```
 

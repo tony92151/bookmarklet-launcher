@@ -11,7 +11,7 @@ const execFile = promisify(execFileCallback);
 const PACKAGER_PATH = resolve("scripts/package-extension.mjs");
 const ARCHIVE_NAME = "bookmarklet-script-manager.zip";
 const PRIVACY_POLICY_URL =
-  "https://tony92151.github.io/bookmarklet-launcher/site/privacy.html";
+  "https://tony92151.github.io/bookmarklet-script-manager-market/privacy.html";
 
 test("release packager defines a strict extension-file allowlist", async () => {
   const source = await readFile("scripts/package-extension.mjs", "utf8");

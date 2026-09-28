@@ -25,7 +25,7 @@ Manager to the Chrome Web Store.
 - [ ] Upload `dist/bookmarklet-script-manager.zip` as a Chrome Web Store test
   release, not a production rollout.
 - [ ] Complete the Chrome Web Store privacy field with the published privacy
-  policy: `https://tony92151.github.io/bookmarklet-launcher/site/privacy.html`.
+  policy: `https://tony92151.github.io/bookmarklet-script-manager-market/privacy.html`.
 - [ ] Set the support URL to GitHub Issues:
   `https://github.com/tony92151/bookmarklet-launcher/issues`.
 
