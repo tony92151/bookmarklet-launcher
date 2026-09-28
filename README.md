@@ -8,6 +8,7 @@ The project has no build step or external runtime dependencies.
 ## Extension features
 
 - Add, edit, and delete custom scripts
+- Save a local copy of a public GitHub `.js` file from a separate tab
 - Supports `javascript:` bookmarklets and raw JavaScript through explicit input modes
 - Removes the `javascript:` prefix; URL decoding occurs only when you select the URL-encoded bookmarklet input mode
 - Uses `chrome.storage.local` to store scripts, supporting larger bookmarklet examples
@@ -54,6 +55,10 @@ not guarantee that every bookmarklet will work.
 3. Enter a script name, paste a `javascript:` bookmarklet or raw JavaScript.
 4. Click **Save**.
 5. Go to the target webpage, open the popup, and click the script name to execute it in the current tab.
+
+To import from GitHub, switch to the **GitHub** tab under **Add Script**, paste a
+public GitHub file link ending in `.js`, and click **Save**. The extension saves
+a local copy immediately; it does not update when the GitHub file changes.
 
 Example input:
 
@@ -139,7 +144,7 @@ icons/             extension icons
 
 The core function of this tool is to execute JavaScript that you paste. Only save and run scripts you trust and understand.
 
-- No external source scripts loaded
+- GitHub import fetches a public source file only when you click **Save**; saved scripts run from local storage
 - Scripts are not sent to remote services
 - Script data is stored in the browser's local `chrome.storage.local`
 - Sites that block Blob scripts may require **Allow user scripts** for saved scripts to run

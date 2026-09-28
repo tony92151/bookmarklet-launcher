@@ -31,7 +31,7 @@ test('getScripts discards malformed script records', async (t) => {
   t.after(() => delete globalThis.chrome);
   installStorage([{ id: 'valid', name: 'Valid', code: 'alert(1)', createdAt: 1 }, { id: 'broken' }]);
 
-  assert.deepEqual(await getScripts(), [{ id: 'valid', name: 'Valid', code: 'alert(1)', createdAt: 1 }]);
+  assert.deepEqual(await getScripts(), [{ id: 'valid', name: 'Valid', code: 'alert(1)', createdAt: 1, updatedAt: 1 }]);
 });
 
 test('concurrent saves preserve both scripts', async (t) => {
@@ -49,15 +49,19 @@ test('concurrent saves preserve both scripts', async (t) => {
   ]);
 
   assert.deepEqual(storage.value.map((script) => script.name), ['A', 'B']);
+  assert.ok(storage.value.every((script) => script.createdAt === script.updatedAt));
 });
 
 test('updating a blank name keeps the saved-script name invariant', async (t) => {
   t.after(() => delete globalThis.chrome);
   const storage = installStorage([{ id: 'one', name: 'Original', code: 'alert(1)', createdAt: 1 }]);
   resetScriptStorageForTests();
+  const originalNow = Date.now;
+  Date.now = () => 2000;
+  t.after(() => { Date.now = originalNow; });
 
   assert.deepEqual(await updateScript('one', { name: '', code: 'alert(2)' }), {
-    id: 'one', name: 'Unnamed Script', code: 'alert(2)', createdAt: 1,
+    id: 'one', name: 'Unnamed Script', code: 'alert(2)', createdAt: 1, updatedAt: 2000,
   });
   await deleteScript('missing');
   assert.equal(storage.writes.length, 1);

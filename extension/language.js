@@ -33,6 +33,12 @@ const translations = {
     privacy: 'Privacy Policy', edit: 'Edit', delete: 'Delete', deleteConfirm: 'Delete "{name}"?',
     updated: 'Updated.', saved: 'Saved.', decodedSaved: 'Decoded bookmarklet and saved.',
     emptyCode: 'Code cannot be empty.', malformedEncoding: 'Unable to decode bookmarklet: malformed percent encoding.',
+    addScriptMethod: 'Add script method', manual: 'Manual', githubFileUrl: 'GitHub JavaScript file URL',
+    githubCopyHint: 'Save a one-time local copy of a public .js file.', githubLoading: 'Loading GitHub file…',
+    githubSaved: 'Saved a local copy.', githubInvalidLink: 'Enter a GitHub link to a .js file.',
+    githubConnectionError: 'Unable to load the GitHub file. Check your connection and try again.',
+    githubHttpError: 'Unable to load the GitHub file (HTTP {status}).', githubEmptyFile: 'The GitHub file is empty.',
+    updatedAt: 'Updated {date}', updatedTimeUnavailable: 'Updated time unavailable',
   },
   'zh-TW': {
     documentTitle: '書籤指令碼管理器', brandName: '指令碼管理器', version: '版本',
@@ -68,6 +74,12 @@ const translations = {
     privacy: '隱私權政策', edit: '編輯', delete: '刪除', deleteConfirm: '刪除「{name}」？',
     updated: '已更新。', saved: '已儲存。', decodedSaved: '已解碼並儲存書籤指令碼。',
     emptyCode: '指令碼內容不可為空。', malformedEncoding: '無法解碼書籤指令碼：百分比編碼格式錯誤。',
+    addScriptMethod: '新增指令碼方式', manual: '手動輸入', githubFileUrl: 'GitHub JavaScript 檔案網址',
+    githubCopyHint: '儲存公開 .js 檔案的一次性本機副本。', githubLoading: '正在載入 GitHub 檔案…',
+    githubSaved: '已儲存本機副本。', githubInvalidLink: '請輸入 GitHub .js 檔案連結。',
+    githubConnectionError: '無法載入 GitHub 檔案。請檢查網路連線後重試。',
+    githubHttpError: '無法載入 GitHub 檔案（HTTP {status}）。', githubEmptyFile: 'GitHub 檔案是空的。',
+    updatedAt: '更新時間：{date}', updatedTimeUnavailable: '無法取得更新時間',
   },
 };
 

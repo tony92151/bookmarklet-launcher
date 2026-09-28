@@ -41,6 +41,7 @@ test("release packager creates a deterministic archive without stale entries", a
 
   assert.deepEqual(await archiveEntries(archivePath), [
     "extension/background.js",
+    "extension/github-import.js",
     "extension/language.js",
     "extension/options/index.html",
     "extension/options/index.js",
